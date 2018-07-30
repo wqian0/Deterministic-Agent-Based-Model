@@ -169,7 +169,7 @@ public class DynamicSimulation {
 				other.sortingPlaceholder=runningTotal;
 			}
 		}
-		double random = Math.random()*runningTotal;
+		double random = Main.RNG.nextDouble()*runningTotal;
 		int startIndex=0;
 		int endIndex=result.size()-1;
 		int currentIndex=0;
@@ -199,7 +199,7 @@ public class DynamicSimulation {
 		Vertice other;
 		temp = new ArrayList<>(graphList[weekday].getVertices());
 		while (temp.size()>0) {
-			current = temp.get((int)(Math.random()*temp.size()));
+			current = temp.get((int)(Main.RNG.nextDouble()*temp.size()));
 			other = generateRandContact(current);
 			if (other==null) {
 				temp.remove(current);

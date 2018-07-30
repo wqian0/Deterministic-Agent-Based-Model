@@ -173,7 +173,7 @@ public class Vertice{
 		else
 			return false;
 		
-		if(state==HealthState.susceptible&&v.getState()==HealthState.infected&&Math.random()<tProbability)
+		if(state==HealthState.susceptible&&v.getState()==HealthState.infected&&Main.RNG.nextDouble()<tProbability)
 		{
 			state=HealthState.exposed;
 			daysSinceExposed=0;
