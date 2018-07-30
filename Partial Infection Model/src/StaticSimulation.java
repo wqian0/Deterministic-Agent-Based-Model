@@ -314,16 +314,15 @@ public class StaticSimulation {
 	{
 		double result=0;
 		for(Vertice v: vertices)
-			result+=(1-v.getTodayTracker().PNI)*exposedProduct(v);
+			if(!v.getRecoveryState())
+				result+=(1-v.getCumulation())*exposedProduct(v);
 		return result;
 	}
 	public double exposedProduct(Vertice v)
 	{
-		if(v.getRecoveryState()||v.getVaccinationState())
-			return 0;
 		double result=1;
 		result*=v.getTodayTracker().PNI;
-		for(int i=1; i<latentPd-1; i++)
+		for(int i=0; i<latentPd-1; i++)
 			result*=v.getTracker()[i].PNI;
 		return 1-result;
 	}
