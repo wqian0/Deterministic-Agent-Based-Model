@@ -24,7 +24,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.StringTokenizer;
-
+import java.util.SplittableRandom;
 
 public class Main {
 
@@ -43,6 +43,9 @@ public class Main {
 
 	//number of graphs rotated through in the dynamic graph
 	static final int numDayGraphs=5;
+	
+	//seeded random for use in stochastic model.  
+	static final SplittableRandom RNG = new SplittableRandom(177);
 
 	// read edges from an input file, assuming the vertices are in the hashmap
 	public static ArrayList<Edge> getEdges(Scanner sc, HashMap<String,Vertice> map, int day)
@@ -198,7 +201,7 @@ public class Main {
 			temp.add(i);
 		for(int i=0; i<num; i++)
 		{
-			random=(int)(Math.random()*temp.size());
+			random=(int)(RNG.nextDouble()*temp.size());
 			if(!vertices.get(random).getRecoveryState())
 			{
 				vertices.get(random).setRecoveryState(true);
