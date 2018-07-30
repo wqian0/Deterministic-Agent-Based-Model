@@ -25,15 +25,6 @@ public class Course implements Comparable<Course> {
 	{
 		return students.size();
 	}
-	public ArrayList<Integer> getRandContactsList()
-	{
-		ArrayList<Integer> returnList = new ArrayList<>();
-		for(int i=0; i<students.size(); i++)
-		{
-			returnList.add((int)(4*Math.sqrt(time.getDuration())));
-		}
-		return returnList;
-	}
 	public void show()
 	{
 		System.out.println("ID:" + ID + " Duration:"+time.getDuration()+" size:"+students.size());
