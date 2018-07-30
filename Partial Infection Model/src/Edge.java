@@ -34,12 +34,6 @@ public class Edge{
 		return null;
 			
 	}
-	public boolean equals(Edge e)
-	{
-		if(weight==e.weight&&(v1==e.getSource()&&v2==e.getTarget())||(v1==e.getTarget()&&v2==e.getSource()))
-			return true;
-		return false;
-	}
 	public String toString()
 	{
 		return v1.getID() + "\t" + v2.getID() +"\t" + weight;

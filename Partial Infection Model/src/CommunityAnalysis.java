@@ -7,6 +7,9 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 public class CommunityAnalysis {
+	
+	static final String inputDirectory = "C:\\Simulation Input\\";
+	
 	public static HashMap<Integer, ArrayList<String>> getCommunities(Scanner sc)
 	{
 		HashMap<Integer, ArrayList<String>> communities = new HashMap<>(); 
@@ -26,7 +29,6 @@ public class CommunityAnalysis {
 				temp.clear();
 			}
 		}
-		//sc.close();
 		return communities;
 	}
 	public static ArrayList<Community> convertFormat(HashMap<Integer, ArrayList<String>> input)
@@ -126,8 +128,6 @@ public class CommunityAnalysis {
 			if(tempP!=0)
 				denominator+=tempP*Math.log10(tempP);
 		}
-		//System.out.println("N \t"+numerator);
-		//System.out.println("D \t"+ denominator);
 		return numerator/denominator;
 	}
 	public static double P(ArrayList<String> L1, ArrayList<String> L2, double totalSize)
@@ -161,11 +161,8 @@ public class CommunityAnalysis {
 	{
 		double[][] results = new double[input.size()][input.size()];
 		ArrayList<ArrayList<ArrayList<String>>> list = new ArrayList<>();
-		int count=0;
 		for(Scanner s: input)
 		{
-			count++;
-			System.out.println(count);
 			list.add(convertToList(getCommunities(s)));
 			s.close();
 		}
@@ -181,98 +178,25 @@ public class CommunityAnalysis {
 		}
 		return results;
 	}
-	public static double[][] getTable(Scanner M, Scanner T, Scanner W, Scanner Th, Scanner F)
-	{
-		
-		ArrayList<ArrayList<String>> Monday = convertToList(getCommunities(M));
-		ArrayList<ArrayList<String>> Tuesday = convertToList(getCommunities(T));
-		ArrayList<ArrayList<String>> Wednesday = convertToList(getCommunities(W));
-		ArrayList<ArrayList<String>> Thursday = convertToList(getCommunities(Th));
-		ArrayList<ArrayList<String>> Friday = convertToList(getCommunities(F));
-		
-		ArrayList<ArrayList<ArrayList<String>>> list = new ArrayList<>(); //absurd but gets the job done w/o much hassle
-		double[][] results = new double[5][5];
-		list.add(Monday);
-		list.add(Tuesday);
-		list.add(Wednesday);
-		list.add(Thursday);
-		list.add(Friday);
-		int tempTotal;
-		for(int i=0; i<list.size(); i++)
-		{
-			for(int j=0; j<list.size(); j++)
-			{
-				tempTotal=countUnion(list.get(i),list.get(j));
-				results[i][j]=calculateNMI(list.get(i),list.get(j), tempTotal);
-			}
-		}
-		M.close();
-		T.close();
-		W.close();
-		Th.close();
-		F.close();
-		return results;
-	}
-	public static HashMap<String, ArrayList<Double>> getAvgValues(Scanner M, Scanner T, Scanner W, Scanner Th, Scanner F)
-	{
-		HashMap<String, ArrayList<Double>> map = new HashMap<>();
-		ArrayList<Double> empty = new ArrayList<>();
-		for(int i=0; i<5; i++)
-			empty.add(0.0);
-		M.nextLine(); T.nextLine(); W.nextLine(); Th.nextLine(); F.nextLine();
-		String temp;
-		while(M.hasNext())
-		{
-			temp = M.next();
-			if(!map.containsKey(temp))
-				map.put(temp, new ArrayList<>(empty));
-			for(int i=0; i<5; i++)
-				map.get(temp).set(i,map.get(temp).get(i)+M.nextDouble());
-		}
-		while(T.hasNext())
-		{
-			temp = T.next();
-			if(!map.containsKey(temp))
-				map.put(temp, new ArrayList<>(empty));
-			for(int i=0; i<5; i++)
-				map.get(temp).set(i,map.get(temp).get(i)+T.nextDouble());
-		}
-		while(W.hasNext())
-		{
-			temp = W.next();
-			if(!map.containsKey(temp))
-				map.put(temp, new ArrayList<>(empty));
-			for(int i=0; i<5; i++)
-				map.get(temp).set(i,map.get(temp).get(i)+W.nextDouble());
-		}
-		while(Th.hasNext())
-		{
-			temp = Th.next();
-			if(!map.containsKey(temp))
-				map.put(temp, new ArrayList<>(empty));
-			for(int i=0; i<5; i++)
-				map.get(temp).set(i,map.get(temp).get(i)+Th.nextDouble());
-		}
-		while(F.hasNext())
-		{
-			temp = F.next();
-			if(!map.containsKey(temp))
-				map.put(temp, new ArrayList<>(empty));
-			for(int i=0; i<5; i++)
-				map.get(temp).set(i,map.get(temp).get(i)+F.nextDouble());
-		}
-		for(String s: map.keySet())
-		{
-			for(int i=0; i<5; i++)
-			{
-				map.get(s).set(i, map.get(s).get(i)/5.0);
-			}
-		}
-		M.close(); T.close(); W.close(); Th.close(); F.close();
-		return map;
-	}
+	
 	public static void main(String[] args) throws IOException
 	{
+		Scanner Monday = new Scanner(new File(inputDirectory+"Monday\\Monday Duration Communities.txt"));
+		Scanner Tuesday = new Scanner(new File(inputDirectory+"Tuesday\\Tuesday Duration Communities.txt"));
+		Scanner Wednesday = new Scanner(new File(inputDirectory+"Wednesday\\Wednesday Duration Communities.txt"));
+		Scanner Thursday = new Scanner(new File(inputDirectory+"Thursday\\Thursday Duration Communities.txt"));
+		Scanner Friday = new Scanner(new File(inputDirectory+"Friday\\Friday Duration Communities.txt"));
+		ArrayList<Scanner> input = new ArrayList<>();
+		input.add(Monday); input.add(Tuesday); input.add(Wednesday); input.add(Thursday); input.add(Friday);
+		double[][] result = getTable(input);
 		
+		for(int i=0; i<result.length; i++)
+		{
+			for(int j=0; j<result.length; j++)
+			{
+				System.out.printf("%.3f \t", result[i][j]);
+			}
+			System.out.println();
+		}
 	}
 }

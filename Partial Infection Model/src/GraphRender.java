@@ -56,6 +56,7 @@ public class GraphRender extends Application{
 	int weekday=0;
 	static final int canvasSize = 1500;
 	static final double radius=3; 
+	static final double scaleFactor=7.0;
 	Group root;
 	HashMap<String, Vertice> IDmap;
 	HashMap<Vertice, Location> map;
@@ -68,9 +69,9 @@ public class GraphRender extends Application{
 	static final int numDayGraphs=5;
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=0.3;
-	static final int latentPeriod=30;
-	static final int infectiousPeriod=15;
+	static final double transmissionProbability=0.9;
+	static final int latentPeriod=8;
+	static final int infectiousPeriod=10;
 	static final int contactsPerHour=3;
 	static final int numCentralities=4;
 
@@ -82,7 +83,7 @@ public class GraphRender extends Application{
 		Scanner coordinates = new Scanner(new File(inputDirectory+"Coordinates.txt"));
 		map=Main.getLocations(coordinates, IDmap);
 		for(Vertice v: vertices)
-			map.put(v, new Location(map.get(v).x/8.0+500,map.get(v).y/8.0+100));
+			map.put(v, new Location(map.get(v).x/scaleFactor+500,map.get(v).y/scaleFactor+20));
 	}
 	public void setSim() throws FileNotFoundException
 	{

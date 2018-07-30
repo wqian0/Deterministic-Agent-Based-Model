@@ -635,14 +635,12 @@ public class Main {
 		}
 		for(Integer x: partition.keySet())
 		{
-
 			Collections.sort(verticeCommMap.get(x), new Comparator<Vertice>() { 
 				@Override
 				public int compare(Vertice v1,Vertice v2) {
 					return v1.centralities.get(traitID).compareTo(v2.centralities.get(traitID));
 				}
 			});
-
 		}
 		if(pickHigh)
 		{
@@ -790,7 +788,7 @@ public class Main {
 		String tempString;
 		String tempString2;
 		double tempY;
-		for(int i=0; i<3679; i++)
+		for(int i=0; i<map.size(); i++)
 		{
 			sc.nextLine();
 			sc.nextLine();
@@ -885,8 +883,7 @@ public class Main {
 			c_FullD.close();
 
 			StaticSimulation SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
-			SS.setInfected(vertices.get(0));
-			SS.simul();
+			runStaticSimulation(SS, vertices.get(0), true);
 		}
 		else
 		{
@@ -899,25 +896,8 @@ public class Main {
 			Graph[] graphList = {mondayGraph,tuesdayGraph,wednesdayGraph,thursdayGraph,fridayGraph};
 
 			DynamicSimulation DS = new DynamicSimulation(graphList,vertices,transmissionProbability,latentPeriod,infectiousPeriod);
-			DS.setTrickler(vertices.get(0));
-			DS.setStartDay(vertices.get(0).getStartingPoint());
-			DS.trickleSimul();
-			/*
-			for(int traitID=1; traitID<numCentralities; traitID++)
-			{
-				for(int numVaccines = 200; numVaccines<500; numVaccines+=100)
-				{
-					runReactionaryVaccDS(DS, Meta, dist, commMap, map, numVaccines,traitID, true);
-				}
-			}
-			for(int numVaccines = 200; numVaccines<500; numVaccines+=100)
-			{
-				runReactionaryVaccDS(DS, Meta, dist, commMap, map, numVaccines,4, false);
-			}	
-			*/
+			runDynamicSimulation(DS, vertices.get(0), true);
 		}
 		experiment.close();
-		
-		//TEST COMMENT ************
 	}
 }

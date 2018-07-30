@@ -1,6 +1,5 @@
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 
@@ -285,8 +284,7 @@ public class StaticSimulation {
 	public void trickleSimul()
 	{
 		currentTotal=expectedNumInfected();
-		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
-	//	while(day<75)
+		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<50)
 		{
 			previousTotal=currentTotal;
 			runTrickleDay();

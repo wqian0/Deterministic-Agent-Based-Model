@@ -1,6 +1,5 @@
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 
@@ -173,7 +172,8 @@ public class DynamicSimulation {
 		int startIndex=0;
 		int endIndex=result.size()-1;
 		int currentIndex=0;
-		
+		if(result.size()==0)
+			return null;
 		if(result.get(0).sortingPlaceholder>random)
 			return result.get(0);
 		while(endIndex-startIndex!=1)
@@ -304,8 +304,7 @@ public class DynamicSimulation {
 	public void trickleSimul()
 	{
 		currentTotal=expectedNumInfected();
-	//	while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
-		while(day<400)
+		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<50)
 		{
 			previousTotal=currentTotal;
 			runTrickleDay();
