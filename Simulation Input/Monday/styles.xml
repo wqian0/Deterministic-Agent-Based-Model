@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<vizmap documentVersion="3.0" id="VizMap-2017_08_15-13_55">
+    <visualStyle name="ModuLand_0">
+        <network>
+            <visualProperty name="NETWORK_CENTER_Z_LOCATION" default="0.0"/>
+            <visualProperty name="NETWORK_BACKGROUND_PAINT" default="#FFFFFF"/>
+            <visualProperty name="NETWORK_NODE_SELECTION" default="true"/>
+            <visualProperty name="NETWORK_EDGE_SELECTION" default="true"/>
+            <visualProperty name="NETWORK_WIDTH" default="550.0"/>
+            <visualProperty name="NETWORK_DEPTH" default="0.0"/>
+            <visualProperty name="NETWORK_SCALE_FACTOR" default="1.0"/>
+            <visualProperty name="NETWORK_CENTER_X_LOCATION" default="0.0"/>
+            <visualProperty name="NETWORK_TITLE" default="">
+                <passthroughMapping attributeType="string" attributeName="name"/>
+            </visualProperty>
+            <visualProperty name="NETWORK_HEIGHT" default="400.0"/>
+            <visualProperty name="NETWORK_CENTER_Y_LOCATION" default="0.0"/>
+        </network>
+        <node>
+            <dependency name="nodeCustomGraphicsSizeSync" value="true"/>
+            <dependency name="nodeSizeLocked" value="true"/>
+            <visualProperty name="NODE_LABEL_FONT_FACE" default="SansSerif.plain,plain,12"/>
+            <visualProperty name="NODE_NESTED_NETWORK_IMAGE_VISIBLE" default="true"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_POSITION_9" default="C,C,c,0.00,0.00"/>
+            <visualProperty name="NODE_VISIBLE" default="true"/>
+            <visualProperty name="NODE_BORDER_TRANSPARENCY" default="255"/>
+            <visualProperty name="NODE_SELECTED" default="false"/>
+            <visualProperty name="NODE_BORDER_WIDTH" default="2.0"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_POSITION_4" default="C,C,c,0.00,0.00"/>
+            <visualProperty name="NODE_Y_LOCATION" default="0.0"/>
+            <visualProperty name="NODE_LABEL_TRANSPARENCY" default="255"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_5" default="org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_SIZE_7" default="0.0"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_8" default="org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"/>
+            <visualProperty name="NODE_LABEL_FONT_SIZE" default="12"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_SIZE_9" default="0.0"/>
+            <visualProperty name="NODE_HEIGHT" default="40.0"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_POSITION_2" default="C,C,c,0.00,0.00"/>
+            <visualProperty name="NODE_Z_LOCATION" default="0.0"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_POSITION_6" default="C,C,c,0.00,0.00"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_SIZE_5" default="0.0"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_1" default="org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"/>
+            <visualProperty name="NODE_LABEL" default=""/>
+            <visualProperty name="NODE_SHAPE" default="ELLIPSE"/>
+            <visualProperty name="COMPOUND_NODE_PADDING" default="10.0"/>
+            <visualProperty name="NODE_LABEL_POSITION" default="C,C,c,0.00,0.00"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_2" default="org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"/>
+            <visualProperty name="NODE_LABEL_WIDTH" default="200.0"/>
+            <visualProperty name="COMPOUND_NODE_SHAPE" default="ROUND_RECTANGLE"/>
+            <visualProperty name="NODE_TRANSPARENCY" default="255"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_SIZE_6" default="0.0"/>
+            <visualProperty name="NODE_SELECTED_PAINT" default="#FFFF00"/>
+            <visualProperty name="NODE_FILL_COLOR" default="#FFFFFF">
+                <discreteMapping attributeType="integer" attributeName="Module_Color">
+                    <discreteMappingEntry value="#FFFFFF" attributeValue="-1"/>
+                    <discreteMappingEntry value="#FF0600" attributeValue="0"/>
+                    <discreteMappingEntry value="#FF1300" attributeValue="1"/>
+                    <discreteMappingEntry value="#FF2000" attributeValue="2"/>
+                    <discreteMappingEntry value="#FF2D00" attributeValue="3"/>
+                    <discreteMappingEntry value="#FF3900" attributeValue="4"/>
+                    <discreteMappingEntry value="#FF4600" attributeValue="5"/>
+                    <discreteMappingEntry value="#FF5300" attributeValue="6"/>
+                    <discreteMappingEntry value="#FF6000" attributeValue="7"/>
+                    <discreteMappingEntry value="#FF6C00" attributeValue="8"/>
+                    <discreteMappingEntry value="#FF7900" attributeValue="9"/>
+                    <discreteMappingEntry value="#FF8600" attributeValue="10"/>
+                    <discreteMappingEntry value="#FF9300" attributeValue="11"/>
+                    <discreteMappingEntry value="#FF9F00" attributeValue="12"/>
+                    <discreteMappingEntry value="#FFAC00" attributeValue="13"/>
+                    <discreteMappingEntry value="#FFB900" attributeValue="14"/>
+                    <discreteMappingEntry value="#FFC600" attributeValue="15"/>
+                    <discreteMappingEntry value="#FFD200" attributeValue="16"/>
+                    <discreteMappingEntry value="#FFDF00" attributeValue="17"/>
+                    <discreteMappingEntry value="#FFEC00" attributeValue="18"/>
+                    <discreteMappingEntry value="#FFF900" attributeValue="19"/>
+                    <discreteMappingEntry value="#F9FF00" attributeValue="20"/>
+                    <discreteMappingEntry value="#ECFF00" attributeValue="21"/>
+                    <discreteMappingEntry value="#DFFF00" attributeValue="22"/>
+                    <discreteMappingEntry value="#D2FF00" attributeValue="23"/>
+                    <discreteMappingEntry value="#C6FF00" attributeValue="24"/>
+                    <discreteMappingEntry value="#B9FF00" attributeValue="25"/>
+                    <discreteMappingEntry value="#ACFF00" attributeValue="26"/>
+                    <discreteMappingEntry value="#9FFF00" attributeValue="27"/>
+                    <discreteMappingEntry value="#93FF00" attributeValue="28"/>
+                    <discreteMappingEntry value="#86FF00" attributeValue="29"/>
+                    <discreteMappingEntry value="#79FF00" attributeValue="30"/>
+                    <discreteMappingEntry value="#6CFF00" attributeValue="31"/>
+                    <discreteMappingEntry value="#60FF00" attributeValue="32"/>
+                    <discreteMappingEntry value="#53FF00" attributeValue="33"/>
+                    <discreteMappingEntry value="#46FF00" attributeValue="34"/>
+                    <discreteMappingEntry value="#39FF00" attributeValue="35"/>
+                    <discreteMappingEntry value="#2DFF00" attributeValue="36"/>
+                    <discreteMappingEntry value="#20FF00" attributeValue="37"/>
+                    <discreteMappingEntry value="#13FF00" attributeValue="38"/>
+                    <discreteMappingEntry value="#06FF00" attributeValue="39"/>
+                    <discreteMappingEntry value="#00FF06" attributeValue="40"/>
+                    <discreteMappingEntry value="#00FF13" attributeValue="41"/>
+                    <discreteMappingEntry value="#00FF20" attributeValue="42"/>
+                    <discreteMappingEntry value="#00FF2D" attributeValue="43"/>
+                    <discreteMappingEntry value="#00FF39" attributeValue="44"/>
+                    <discreteMappingEntry value="#00FF46" attributeValue="45"/>
+                    <discreteMappingEntry value="#00FF53" attributeValue="46"/>
+                    <discreteMappingEntry value="#00FF60" attributeValue="47"/>
+                    <discreteMappingEntry value="#00FF6C" attributeValue="48"/>
+                    <discreteMappingEntry value="#00FF79" attributeValue="49"/>
+                    <discreteMappingEntry value="#00FF86" attributeValue="50"/>
+                    <discreteMappingEntry value="#00FF93" attributeValue="51"/>
+                    <discreteMappingEntry value="#00FF9F" attributeValue="52"/>
+                    <discreteMappingEntry value="#00FFAC" attributeValue="53"/>
+                    <discreteMappingEntry value="#00FFB9" attributeValue="54"/>
+                    <discreteMappingEntry value="#00FFC6" attributeValue="55"/>
+                    <discreteMappingEntry value="#00FFD2" attributeValue="56"/>
+                    <discreteMappingEntry value="#00FFDF" attributeValue="57"/>
+                    <discreteMappingEntry value="#00FFEC" attributeValue="58"/>
+                    <discreteMappingEntry value="#00FFF9" attributeValue="59"/>
+                    <discreteMappingEntry value="#00F9FF" attributeValue="60"/>
+                    <discreteMappingEntry value="#00ECFF" attributeValue="61"/>
+                    <discreteMappingEntry value="#00DFFF" attributeValue="62"/>
+                    <discreteMappingEntry value="#00D2FF" attributeValue="63"/>
+                    <discreteMappingEntry value="#00C6FF" attributeValue="64"/>
+                    <discreteMappingEntry value="#00B9FF" attributeValue="65"/>
+                    <discreteMappingEntry value="#00ACFF" attributeValue="66"/>
+                    <discreteMappingEntry value="#009FFF" attributeValue="67"/>
+                    <discreteMappingEntry value="#0093FF" attributeValue="68"/>
+                    <discreteMappingEntry value="#0086FF" attributeValue="69"/>
+                    <discreteMappingEntry value="#0079FF" attributeValue="70"/>
+                    <discreteMappingEntry value="#006CFF" attributeValue="71"/>
+                    <discreteMappingEntry value="#0060FF" attributeValue="72"/>
+                    <discreteMappingEntry value="#0053FF" attributeValue="73"/>
+                    <discreteMappingEntry value="#0046FF" attributeValue="74"/>
+                    <discreteMappingEntry value="#0039FF" attributeValue="75"/>
+                    <discreteMappingEntry value="#002DFF" attributeValue="76"/>
+                    <discreteMappingEntry value="#0020FF" attributeValue="77"/>
+                    <discreteMappingEntry value="#0013FF" attributeValue="78"/>
+                    <discreteMappingEntry value="#0006FF" attributeValue="79"/>
+                    <discreteMappingEntry value="#0600FF" attributeValue="80"/>
+                    <discreteMappingEntry value="#1300FF" attributeValue="81"/>
+                    <discreteMappingEntry value="#2000FF" attributeValue="82"/>
+                    <discreteMappingEntry value="#2D00FF" attributeValue="83"/>
+                    <discreteMappingEntry value="#3900FF" attributeValue="84"/>
+                    <discreteMappingEntry value="#4600FF" attributeValue="85"/>
+                    <discreteMappingEntry value="#5300FF" attributeValue="86"/>
+                    <discreteMappingEntry value="#6000FF" attributeValue="87"/>
+                    <discreteMappingEntry value="#6C00FF" attributeValue="88"/>
+                    <discreteMappingEntry value="#7900FF" attributeValue="89"/>
+                    <discreteMappingEntry value="#8600FF" attributeValue="90"/>
+                    <discreteMappingEntry value="#9300FF" attributeValue="91"/>
+                    <discreteMappingEntry value="#9F00FF" attributeValue="92"/>
+                    <discreteMappingEntry value="#AC00FF" attributeValue="93"/>
+                    <discreteMappingEntry value="#B900FF" attributeValue="94"/>
+                    <discreteMappingEntry value="#C600FF" attributeValue="95"/>
+                    <discreteMappingEntry value="#D200FF" attributeValue="96"/>
+                    <discreteMappingEntry value="#DF00FF" attributeValue="97"/>
+                    <discreteMappingEntry value="#EC00FF" attributeValue="98"/>
+                    <discreteMappingEntry value="#F900FF" attributeValue="99"/>
+                    <discreteMappingEntry value="#FF00F9" attributeValue="100"/>
+                    <discreteMappingEntry value="#FF00EC" attributeValue="101"/>
+                    <discreteMappingEntry value="#FF00DF" attributeValue="102"/>
+                    <discreteMappingEntry value="#FF00D2" attributeValue="103"/>
+                    <discreteMappingEntry value="#FF00C6" attributeValue="104"/>
+                    <discreteMappingEntry value="#FF00B9" attributeValue="105"/>
+                    <discreteMappingEntry value="#FF00AC" attributeValue="106"/>
+                    <discreteMappingEntry value="#FF009F" attributeValue="107"/>
+                    <discreteMappingEntry value="#FF0093" attributeValue="108"/>
+                    <discreteMappingEntry value="#FF0086" attributeValue="109"/>
+                    <discreteMappingEntry value="#FF0079" attributeValue="110"/>
+                    <discreteMappingEntry value="#FF006C" attributeValue="111"/>
+                    <discreteMappingEntry value="#FF0060" attributeValue="112"/>
+                    <discreteMappingEntry value="#FF0053" attributeValue="113"/>
+                    <discreteMappingEntry value="#FF0046" attributeValue="114"/>
+                    <discreteMappingEntry value="#FF0039" attributeValue="115"/>
+                    <discreteMappingEntry value="#FF002D" attributeValue="116"/>
+                    <discreteMappingEntry value="#FF0020" attributeValue="117"/>
+                    <discreteMappingEntry value="#FF0013" attributeValue="118"/>
+                    <discreteMappingEntry value="#FF0006" attributeValue="119"/>
+                </discreteMapping>
+            </visualProperty>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_4" default="org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"/>
+            <visualProperty name="NODE_BORDER_PAINT" default="#000000"/>
+            <visualProperty name="NODE_WIDTH" default="60.0"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_7" default="org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_9" default="org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_POSITION_7" default="C,C,c,0.00,0.00"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_POSITION_3" default="C,C,c,0.00,0.00"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_SIZE_3" default="0.0"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_SIZE_8" default="0.0"/>
+            <visualProperty name="NODE_BORDER_STROKE" default="SOLID"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_3" default="org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_POSITION_5" default="C,C,c,0.00,0.00"/>
+            <visualProperty name="NODE_DEPTH" default="0.0"/>
+            <visualProperty name="NODE_LABEL_COLOR" default="#000000"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_SIZE_4" default="0.0"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_SIZE_1" default="0.0"/>
+            <visualProperty name="NODE_X_LOCATION" default="0.0"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_POSITION_1" default="C,C,c,0.00,0.00"/>
+            <visualProperty name="NODE_TOOLTIP" default=""/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_6" default="org.cytoscape.ding.customgraphics.NullCustomGraphics,0,[ Remove Graphics ],"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_POSITION_8" default="C,C,c,0.00,0.00"/>
+            <visualProperty name="NODE_CUSTOMGRAPHICS_SIZE_2" default="0.0"/>
+        </node>
+        <edge>
+            <dependency name="arrowColorMatchesEdge" value="false"/>
+            <visualProperty name="EDGE_TOOLTIP" default=""/>
+            <visualProperty name="EDGE_STROKE_SELECTED_PAINT" default="#FF0000"/>
+            <visualProperty name="EDGE_LABEL_TRANSPARENCY" default="255"/>
+            <visualProperty name="EDGE_TARGET_ARROW_UNSELECTED_PAINT" default="#000000"/>
+            <visualProperty name="EDGE_VISIBLE" default="true"/>
+            <visualProperty name="EDGE_LINE_TYPE" default="SOLID"/>
+            <visualProperty name="EDGE_SOURCE_ARROW_SHAPE" default="NONE"/>
+            <visualProperty name="EDGE_LABEL_FONT_FACE" default="SansSerif.plain,plain,10"/>
+            <visualProperty name="EDGE_BEND"/>
+            <visualProperty name="EDGE_LABEL_WIDTH" default="200.0"/>
+            <visualProperty name="EDGE_CURVED" default="true"/>
+            <visualProperty name="EDGE_TARGET_ARROW_SELECTED_PAINT" default="#FFFF00"/>
+            <visualProperty name="EDGE_SELECTED" default="false"/>
+            <visualProperty name="EDGE_TARGET_ARROW_SHAPE" default="NONE"/>
+            <visualProperty name="EDGE_LABEL_COLOR" default="#000000"/>
+            <visualProperty name="EDGE_SOURCE_ARROW_SELECTED_PAINT" default="#FFFF00"/>
+            <visualProperty name="EDGE_TRANSPARENCY" default="255"/>
+            <visualProperty name="EDGE_STROKE_UNSELECTED_PAINT" default="#404040"/>
+            <visualProperty name="EDGE_SOURCE_ARROW_UNSELECTED_PAINT" default="#000000"/>
+            <visualProperty name="EDGE_WIDTH" default="1.0"/>
+            <visualProperty name="EDGE_LABEL" default=""/>
+            <visualProperty name="EDGE_LABEL_FONT_SIZE" default="10"/>
+        </edge>
+    </visualStyle>
+</vizmap>
