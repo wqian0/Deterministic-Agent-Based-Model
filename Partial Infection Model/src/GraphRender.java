@@ -65,14 +65,15 @@ public class GraphRender extends Application{
 
 	// Windows-based directory. Use forward slash for Linux. 
 	static final String inputDirectory = "C:\\Simulation Input\\";
-	static final boolean fullGraphMode=true;
+	static final boolean fullGraphMode=false;
 	static final int numDayGraphs=5;
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=0.9;
-	static final int latentPeriod=8;
-	static final int infectiousPeriod=10;
+	static final double transmissionProbability=.1;
+	static final int latentPeriod=1;
+	static final int infectiousPeriod=3;
 	static final int contactsPerHour=3;
+	
 	static final int numCentralities=4;
 
 	public static void main(String[] args) {

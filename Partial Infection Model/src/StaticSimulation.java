@@ -182,6 +182,10 @@ public class StaticSimulation {
 
 	//A single timestep (day) in the classic stochastic version of agent-based SEIR.
 	public void runDay() {
+		
+		//collection of daily data
+		cumulativeData.add(new double[] {getNumSusceptible(), getNumExposed(), getNumInfected(), getNumResistant()});
+		
 		for (Vertice v : vertices) {
 			v.checkRecovery();
 		}
