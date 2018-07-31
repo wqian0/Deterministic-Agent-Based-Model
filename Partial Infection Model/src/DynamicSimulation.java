@@ -16,10 +16,10 @@ public class DynamicSimulation {
 	private double totalEverInfected;
 	private double previousTotal; 
 	private double currentTotal;
-	
+
 	private int latentPd;
 	private int infectiousPd;
-	
+
 	ArrayList<double[]> cumulativeData;
 
 	public DynamicSimulation(Graph[] graphList,ArrayList<Vertice> vertices, double tProbability, int latentPd, int infectiousPd)
@@ -41,7 +41,7 @@ public class DynamicSimulation {
 		weightRanks=new ArrayList<>();
 		setWeightRanks();
 		cumulativeData = new ArrayList<>();
-		
+
 		for(Vertice v: vertices)
 			v.setProperties(latentPd, infectiousPd);
 	}
@@ -74,7 +74,7 @@ public class DynamicSimulation {
 		{
 			for(Vertice v: vertices)
 			{
-					v.reset();
+				v.reset();
 			}
 		}
 		else
@@ -136,7 +136,7 @@ public class DynamicSimulation {
 				count++;
 		return count;
 	}
-	
+
 	public boolean hasRemaining()
 	{
 		for(Vertice v: vertices)
@@ -174,7 +174,7 @@ public class DynamicSimulation {
 		int currentIndex=0;
 		if(result.size()==0)
 			return null;
-		
+
 		//Binary searching for a range in which random falls. Each range corresponds to a vertex to contact, and are sized based on contact probability.
 		if(result.get(0).searchPlaceholder>random)
 			return result.get(0);
@@ -192,7 +192,8 @@ public class DynamicSimulation {
 	{
 		System.out.println(day+"\t"+getNumSusceptible()+"\t"+getNumExposed()+"\t"+ getNumInfected()+"\t"+getNumResistant());
 	}
-	
+
+	//A single timestep (day) in the classic stochastic version of agent-based SEIR with rotation between graphs.
 	public void runDay() {
 		for (Vertice v : vertices) {
 			v.checkRecovery();
@@ -212,8 +213,8 @@ public class DynamicSimulation {
 					temp.remove(current);
 				if (!other.hasContactsRemaining(weekday))
 					temp.remove(other);
-				}
 			}
+		}
 		day++;
 		weekday = (startingWkDay + day) % 5;
 	}
@@ -227,8 +228,10 @@ public class DynamicSimulation {
 		}
 		show();
 	}
-	
-	
+
+	//	Functions for the deterministic version below:
+
+
 	public void setTricklers(ArrayList<Vertice> list)
 	{
 		for(Vertice v:list)
@@ -240,7 +243,9 @@ public class DynamicSimulation {
 	{
 		v.setCumulation(1.0);
 	}
-	public HashMap<Vertice, Double> getWeightRanks(Vertice v, int day) //pre-calculates tProb*contactProb for each directed pair of vertices
+
+	//pre-calculates tProb*contactProb for each directed pair of vertices
+	public HashMap<Vertice, Double> getWeightRanks(Vertice v, int day) 
 	{
 		HashMap<Vertice,Double> returnList = new HashMap<>();
 		double current=0;
@@ -257,6 +262,7 @@ public class DynamicSimulation {
 		}
 		return returnList;
 	}
+
 	public void setWeightRanks()
 	{
 		for(int i=0; i<graphList.length; i++)
@@ -269,6 +275,7 @@ public class DynamicSimulation {
 			}
 		}
 	}
+
 	public void runTrickleDay()
 	{
 		HashMap<Vertice, Double> tempMap;
@@ -282,20 +289,27 @@ public class DynamicSimulation {
 				{
 					if(!x.getRecoveryState())
 					{
+						//backflow correction
 						altCumulation=v.getCumulation();
 						for(int i=latentPd-1; i<v.getTracker().length; i++)
 						{
 							altCumulation=1-(1-altCumulation)/v.getTracker()[i].getPNI(x);
 						}
+
+						// precision error correction 
 						if(altCumulation<0)
 							altCumulation=0;
+						
 						x.compoundCumulation(1-Math.pow(1-altCumulation*tempMap.get(x),v.getContactsPerDay().get(weekday)),v);
 					}
 				}
 			}
 		}
-		showTrickle2();
+		showTrickle();
+
+		//collection of daily data
 		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
+
 		for(Vertice v: vertices)
 		{
 			v.checkCumulationRecovery(); 
@@ -314,11 +328,11 @@ public class DynamicSimulation {
 			totalEverInfected+=currentTotal;
 		}
 	}
-	public void showTrickle2()
+	public void showTrickle()
 	{
 		System.out.println("Day "+day + "\t"+ numSusceptible()+"\t"+ expectedNumExposed()+"\t"+expectedNumInfected()+"\t"+ numRecovered());
 	}
-	public void printTrickle2(PrintWriter pw)
+	public void printTrickle(PrintWriter pw)
 	{
 		pw.println("Day "+day + "\t"+ numSusceptible()+"\t"+ expectedNumExposed()+"\t"+expectedNumInfected()+"\t"+ numRecovered());
 	}

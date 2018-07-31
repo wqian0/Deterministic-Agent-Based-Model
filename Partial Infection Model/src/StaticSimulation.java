@@ -8,17 +8,17 @@ public class StaticSimulation {
 	private ArrayList<Vertice> vertices;
 	private Graph G;
 	private int day;
-	
+
 	private ArrayList<Vertice> temp;
 	private HashMap<Vertice,HashMap<Vertice, Double>> weightRanks;
 
 	private double totalEverInfected;
 	private double previousTotal; 
 	private double currentTotal;
-	
+
 	private int latentPd;
 	private int infectiousPd;
-	
+
 	ArrayList<double[]> cumulativeData;
 
 	public StaticSimulation(Graph G, double tProbability, int latentPd, int infectiousPd)
@@ -37,7 +37,7 @@ public class StaticSimulation {
 		weightRanks=new HashMap<>();
 		setWeightRanks();
 		cumulativeData = new ArrayList<>();
-		
+
 		for(Vertice v: vertices)
 			v.setProperties(latentPd, infectiousPd);
 	}
@@ -57,7 +57,7 @@ public class StaticSimulation {
 		{
 			for(Vertice v: vertices)
 			{
-					v.reset();
+				v.reset();
 			}
 		}
 		else
@@ -85,7 +85,7 @@ public class StaticSimulation {
 	{
 		input.setState(Vertice.HealthState.infected);
 	}
-	
+
 	public int getDay()
 	{
 		return day;
@@ -114,7 +114,7 @@ public class StaticSimulation {
 				count++;
 		return count;
 	}
-	
+
 	public boolean hasRemaining()
 	{
 		for(Vertice v: vertices)
@@ -122,7 +122,7 @@ public class StaticSimulation {
 				return true;
 		return false;
 	}
-	
+
 	public int getNumResistant()
 	{
 		int count=0;
@@ -161,7 +161,7 @@ public class StaticSimulation {
 		int currentIndex=0;
 		if(result.size()==0)
 			return null;
-		
+
 		//Binary searching for a range in which random falls. Each range corresponds to a vertex to contact, and are sized based on contact probability. 
 		if(result.get(0).searchPlaceholder>random)
 			return result.get(0);
@@ -179,7 +179,8 @@ public class StaticSimulation {
 	{
 		System.out.println(day+"\t"+getNumSusceptible()+"\t"+getNumExposed()+"\t"+ getNumInfected()+"\t"+getNumResistant());
 	}
-	
+
+	//A single timestep (day) in the classic stochastic version of agent-based SEIR.
 	public void runDay() {
 		for (Vertice v : vertices) {
 			v.checkRecovery();
@@ -199,8 +200,8 @@ public class StaticSimulation {
 					temp.remove(current);
 				if (!other.hasContactsRemaining(0))
 					temp.remove(other);
-				}
 			}
+		}
 		day++;
 	}
 	public void simul()
@@ -213,8 +214,10 @@ public class StaticSimulation {
 		}
 		show();
 	}
-	
-	
+
+	//	Functions for the deterministic version below:
+
+
 	public void setTricklers(ArrayList<Vertice> list)
 	{
 		for(Vertice v:list)
@@ -226,7 +229,9 @@ public class StaticSimulation {
 	{
 		v.setCumulation(1.0);
 	}
-	public HashMap<Vertice, Double> getWeightRanks(Vertice v) //pre-calculates tProb*contactProb for each directed pair of vertices
+
+	//pre-calculates tProb*contactProb for each directed pair of vertices
+	public HashMap<Vertice, Double> getWeightRanks(Vertice v) 
 	{
 		HashMap<Vertice,Double> returnList = new HashMap<>();
 		double current=0;
@@ -263,20 +268,27 @@ public class StaticSimulation {
 				{
 					if(!x.getRecoveryState())
 					{
+						//backflow correction
 						altCumulation=v.getCumulation();
 						for(int i=latentPd-1; i<v.getTracker().length; i++)
 						{
 							altCumulation=1-(1-altCumulation)/v.getTracker()[i].getPNI(x);
 						}
-						if(altCumulation>1)
-							altCumulation=1;
+						
+						// precision error correction 
+						if(altCumulation<0)
+							altCumulation=0;
+						
 						x.compoundCumulation(1-Math.pow(1-altCumulation*tempMap.get(x),v.getContactsPerDay().get(0)),v);
 					}
 				}
 			}
 		}
-		//showTrickle2();
+		showTrickle();
+
+		//collection of daily data
 		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
+		
 		for(Vertice v: vertices)
 		{
 			v.checkCumulationRecovery(); 
@@ -294,11 +306,11 @@ public class StaticSimulation {
 			totalEverInfected+=currentTotal;
 		}
 	}
-	public void showTrickle2()
+	public void showTrickle()
 	{
 		System.out.println("Day "+day + "\t"+ numSusceptible()+"\t"+ expectedNumExposed()+"\t"+expectedNumInfected()+"\t"+ numRecovered());
 	}
-	public void printTrickle2(PrintWriter pw)
+	public void printTrickle(PrintWriter pw)
 	{
 		pw.println("Day "+day + "\t"+ numSusceptible()+"\t"+ expectedNumExposed()+"\t"+expectedNumInfected()+"\t"+ numRecovered());
 	}

@@ -38,13 +38,13 @@ public class Main {
 	static final int latentPeriod=1;
 	static final int infectiousPeriod=3;
 	static final int contactsPerHour=3;
-	
+
 	//Used for vaccination distribution analysis
 	static final int numCentralities=4;
 
 	//number of graphs rotated through in the dynamic graph
 	static final int numDayGraphs=5;
-	
+
 	//seeded random for use in stochastic model.  
 	static final SplittableRandom RNG = new SplittableRandom();
 
@@ -63,14 +63,14 @@ public class Main {
 			weight = sc.nextDouble();
 			temp = new Edge(v1,v2,weight);
 			edges.add(temp);
-			
+
 			v1.addEdge(day, temp);
 			v2.addEdge(day, temp);	
 		}
 		sc.close();
 		return edges;
 	}
-	
+
 	//Useful for rendering.
 	public static ArrayList<Edge> getEdgesNoInput(Scanner sc, HashMap<String,Vertice> map)
 	{
@@ -136,31 +136,31 @@ public class Main {
 		ArrayList<Double> analysisArray = new ArrayList<>();
 		ArrayList<Double> analysisArrayRecovered = new ArrayList<>();
 		vaccGlobalPeaks(vertices, traitID, vaccines, pickHigh);
-		
-			for(Vertice v: vertices)
+
+		for(Vertice v: vertices)
+		{
+			if(!v.getVaccinationState())
 			{
-				if(!v.getVaccinationState())
-				{
-					DS.setTrickler(v);
-					DS.setStartDay(v.getStartingPoint());
-					DS.trickleSimul();
-					analysisArray.add(DS.getTotalEverInfected());
-					analysisArrayRecovered.add(DS.numRecovered());
-					System.out.println(v.getID()+"\t" +traitID+"\t"+ DS.getTotalEverInfected());
-					DS.reset(false);
-				}
+				DS.setTrickler(v);
+				DS.setStartDay(v.getStartingPoint());
+				DS.trickleSimul();
+				analysisArray.add(DS.getTotalEverInfected());
+				analysisArrayRecovered.add(DS.numRecovered());
+				System.out.println(v.getID()+"\t" +traitID+"\t"+ DS.getTotalEverInfected());
+				DS.reset(false);
 			}
-			DS.reset(true);
-			
-			// Prints the mean, standard error, and standard deviation of the expected total ever infected/expected number of recovered to console only.
-	
-			double mean = getMean(analysisArray);
-			double stdError = getstdError(analysisArray);
-			double stdDev = getstdDev(analysisArray);
-			double meanR = getMean(analysisArrayRecovered);
-			double stdErrorR = getstdError(analysisArrayRecovered);
-			double stdDevR = getstdDev(analysisArrayRecovered);
-			System.out.println(mean + "\t" + stdDev+"\t"+stdError+"\t --- \t"+meanR+"\t"+stdDevR+"\t"+stdErrorR);
+		}
+		DS.reset(true);
+
+		// Prints the mean, standard error, and standard deviation of the expected total ever infected/expected number of recovered to console only.
+
+		double mean = getMean(analysisArray);
+		double stdError = getstdError(analysisArray);
+		double stdDev = getstdDev(analysisArray);
+		double meanR = getMean(analysisArrayRecovered);
+		double stdErrorR = getstdError(analysisArrayRecovered);
+		double stdDevR = getstdDev(analysisArrayRecovered);
+		System.out.println(mean + "\t" + stdDev+"\t"+stdError+"\t --- \t"+meanR+"\t"+stdDevR+"\t"+stdErrorR);
 	}
 	public static void globalVaccSS(StaticSimulation SS, HashMap<String, Vertice> map,int traitID, int vaccines, boolean pickHigh)
 	{
@@ -168,30 +168,30 @@ public class Main {
 		ArrayList<Double> analysisArray = new ArrayList<>();
 		ArrayList<Double> analysisArrayRecovered = new ArrayList<>();
 		vaccGlobalPeaks(vertices, traitID, vaccines, pickHigh);
-		
-			for(Vertice v: vertices)
+
+		for(Vertice v: vertices)
+		{
+			if(!v.getVaccinationState())
 			{
-				if(!v.getVaccinationState())
-				{
-					SS.setTrickler(v);
-					SS.trickleSimul();
-					analysisArray.add(SS.getTotalEverInfected());
-					analysisArrayRecovered.add(SS.numRecovered());
-					System.out.println(v.getID()+"\t" +traitID+"\t"+ SS.getTotalEverInfected());
-					SS.reset(false);
-				}
+				SS.setTrickler(v);
+				SS.trickleSimul();
+				analysisArray.add(SS.getTotalEverInfected());
+				analysisArrayRecovered.add(SS.numRecovered());
+				System.out.println(v.getID()+"\t" +traitID+"\t"+ SS.getTotalEverInfected());
+				SS.reset(false);
 			}
-			SS.reset(true);
-			
-			// Prints the mean, standard error, and standard deviation of the expected total ever infected/expected number of recovered to console only.
-	
-			double mean = getMean(analysisArray);
-			double stdError = getstdError(analysisArray);
-			double stdDev = getstdDev(analysisArray);
-			double meanR = getMean(analysisArrayRecovered);
-			double stdErrorR = getstdError(analysisArrayRecovered);
-			double stdDevR = getstdDev(analysisArrayRecovered);
-			System.out.println(mean + "\t" + stdDev+"\t"+stdError+"\t --- \t"+meanR+"\t"+stdDevR+"\t"+stdErrorR);
+		}
+		SS.reset(true);
+
+		// Prints the mean, standard error, and standard deviation of the expected total ever infected/expected number of recovered to console only.
+
+		double mean = getMean(analysisArray);
+		double stdError = getstdError(analysisArray);
+		double stdDev = getstdDev(analysisArray);
+		double meanR = getMean(analysisArrayRecovered);
+		double stdErrorR = getstdError(analysisArrayRecovered);
+		double stdDevR = getstdDev(analysisArrayRecovered);
+		System.out.println(mean + "\t" + stdDev+"\t"+stdError+"\t --- \t"+meanR+"\t"+stdDevR+"\t"+stdErrorR);
 	}
 
 	public static void vaccRandomNodes(ArrayList<Vertice> vertices, int num)
@@ -457,8 +457,8 @@ public class Main {
 			}
 		}
 	}
-	
-	
+
+
 	public static double getMean(ArrayList<Double> array)
 	{
 		double sum = 0.0;
@@ -482,7 +482,7 @@ public class Main {
 	{
 		return getstdDev(array)/Math.sqrt(array.size());
 	}
-	
+
 	//Reads file with properties of each vertex and inputs them in the centralities arraylist.
 	/* Input file format is as follows:
 	name	BetweennessCentrality	ClosenessCentrality	Degree	CCC
@@ -651,7 +651,7 @@ public class Main {
 		double stdDevR = getstdDev(analysisArrayRecovered);
 		System.out.println(mean + "\t" + stdDev+"\t"+stdError+"\t --- \t"+meanR+"\t"+stdDevR+"\t"+stdErrorR);
 	}
-	
+
 	public static void runReactionaryVaccSS(StaticSimulation SS, Graph Meta, double[][] dist, HashMap<Integer, ArrayList<String>> commMap, HashMap<String, Vertice> map, int vaccines,int traitID, boolean pickHigh)
 	{
 		ArrayList<Double> analysisArray = new ArrayList<>();
@@ -757,14 +757,14 @@ public class Main {
 		sc.close();
 		return result;
 	}
-	
+
 	public static void main(String args[]) throws IOException
 	{ 
 		Scanner c_FullD = new Scanner(new File(inputDirectory+"Full Graph Duration Communities.txt"));
 		HashMap<Integer, ArrayList<String>> commMap = CommunityAnalysis.getCommunities(c_FullD);
 		// read IDs of nodes
 		Scanner IDs = new Scanner(new File(inputDirectory+"IDList.txt"));
-		
+
 		// maps ID to vertices
 		HashMap<String, Vertice> map = new HashMap<String, Vertice>();
 
@@ -776,17 +776,17 @@ public class Main {
 		}
 		IDs.close();
 		ArrayList<Vertice> vertices = new ArrayList<>(map.values());
-		
+
 		Scanner nodeProperties = new Scanner(new File(inputDirectory+"Node Properties.txt"));
 		addCentralities(nodeProperties,map, numCentralities);
-		
+
 		PrintWriter pw = new PrintWriter("outfile.txt");
 		PrintWriter experiment = new PrintWriter("experiment.txt");
-	
+
 
 		Scanner v_Meta = new Scanner(new File(inputDirectory+"Meta ID List.txt"));
 		HashMap<String, Vertice> metaMap = new HashMap<String, Vertice>();
-		
+
 
 		String metaTemp;
 		while(v_Meta.hasNextLine())
@@ -800,7 +800,7 @@ public class Main {
 		Graph Meta = getGraph(v_Meta, e_Meta, metaMap, 0);
 		v_Meta.close();
 		double[][] dist = allPairsSP(Meta, pw);
-		
+
 		Scanner courseList = new Scanner(new File(inputDirectory+"Courses.txt"));
 		Scanner courseTimes = new Scanner(new File(inputDirectory+"CourseTimes.txt"));
 		ArrayList<Course> courses = initCourses(map,courseTimes,courseList);
@@ -813,9 +813,9 @@ public class Main {
 		for(Course c: courses)
 			for(Integer day:c.getTime().getDays())
 				coursesPerDay.get((int)day).add(c);
-		
+
 		setContactsByDuration(vertices,coursesPerDay,contactsPerHour, fullGraphMode);
-		
+
 		if(fullGraphMode)
 		{
 			Scanner e_Full = new Scanner(new File(inputDirectory+"out_Alld.txt"));

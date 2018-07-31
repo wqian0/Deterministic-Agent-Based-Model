@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 public class CommunityAnalysis {
-	
+
 	static final String inputDirectory = "C:\\Simulation Input\\";
 
 	public static int countUnion(ArrayList<ArrayList<String>> c1, ArrayList<ArrayList<String>> c2)
@@ -44,7 +44,7 @@ public class CommunityAnalysis {
 		}
 		return total-intersection;
 	}
-	
+
 	public static double jaccardIndex(Community c1, Community c2)
 	{
 		double intersection=0;
@@ -117,14 +117,14 @@ public class CommunityAnalysis {
 			total+=P(i.get(c),j,totalSize);
 		return total;
 	}
-	
+
 	public static HashMap<Integer, ArrayList<String>> getCommunities(Scanner sc)
 	{
 		HashMap<Integer, ArrayList<String>> communities = new HashMap<>(); 
 		ArrayList<String> temp = new ArrayList<>();
 		sc.nextLine();
 		int current=0;
-		
+
 		while(sc.hasNextLine())
 		{
 			current=sc.nextInt();
@@ -165,7 +165,7 @@ public class CommunityAnalysis {
 		}
 		return result;
 	}
-	
+
 	public static double[][] getTable(ArrayList<Scanner> input)
 	{
 		double[][] results = new double[input.size()][input.size()];
@@ -182,12 +182,12 @@ public class CommunityAnalysis {
 			{
 				tempTotal = countUnion(list.get(i), list.get(j));
 				results[i][j] = calculateNMI(list.get(i),list.get(j), tempTotal);
-				
+
 			}
 		}
 		return results;
 	}
-	
+
 	public static void main(String[] args) throws IOException
 	{
 		Scanner Monday = new Scanner(new File(inputDirectory+"Monday\\Monday Duration Communities.txt"));
@@ -198,7 +198,7 @@ public class CommunityAnalysis {
 		ArrayList<Scanner> input = new ArrayList<>();
 		input.add(Monday); input.add(Tuesday); input.add(Wednesday); input.add(Thursday); input.add(Friday);
 		double[][] result = getTable(input);
-		
+
 		for(int i=0; i<result.length; i++)
 		{
 			for(int j=0; j<result.length; j++)
