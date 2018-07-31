@@ -174,6 +174,8 @@ public class DynamicSimulation {
 		int currentIndex=0;
 		if(result.size()==0)
 			return null;
+		
+		//Binary searching for a range in which random falls. Each range corresponds to a vertex to contact, and are sized based on contact probability.
 		if(result.get(0).searchPlaceholder>random)
 			return result.get(0);
 		while(endIndex-startIndex!=1)
