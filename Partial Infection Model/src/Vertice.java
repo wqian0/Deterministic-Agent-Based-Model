@@ -10,7 +10,7 @@ public class Vertice{
 	private int daysSinceExposed;
 	private int daysSinceInfection;
 	
-	public double sortingPlaceholder;
+	public double searchPlaceholder;
 	public int day;
 
 	private double expectedSickTime;
@@ -59,7 +59,7 @@ public class Vertice{
 		recovered=false;
 		cumulatedProbability=0;
 		expectedSickTime=0;
-		sortingPlaceholder=0;
+		searchPlaceholder=0;
 		resetTrackerArray();
 		resetRemainingContacts();
 	}

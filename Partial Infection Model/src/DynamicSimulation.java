@@ -165,7 +165,7 @@ public class DynamicSimulation {
 			{
 				runningTotal+=e.getWeight();
 				result.add(other);
-				other.sortingPlaceholder=runningTotal;
+				other.searchPlaceholder=runningTotal;
 			}
 		}
 		double random = Main.RNG.nextDouble()*runningTotal;
@@ -174,12 +174,12 @@ public class DynamicSimulation {
 		int currentIndex=0;
 		if(result.size()==0)
 			return null;
-		if(result.get(0).sortingPlaceholder>random)
+		if(result.get(0).searchPlaceholder>random)
 			return result.get(0);
 		while(endIndex-startIndex!=1)
 		{
 			currentIndex=(startIndex+endIndex)/2;
-			if(result.get(currentIndex).sortingPlaceholder>=random)
+			if(result.get(currentIndex).searchPlaceholder>=random)
 				endIndex=currentIndex;
 			else
 				startIndex=currentIndex;
