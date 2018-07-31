@@ -9,6 +9,7 @@ public class Vertice{
 	private int[] remainingContacts;
 	private int daysSinceExposed;
 	private int daysSinceInfection;
+	
 	public double sortingPlaceholder;
 	public int day;
 

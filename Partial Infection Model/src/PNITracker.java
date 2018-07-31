@@ -1,3 +1,7 @@
+/* Struct used for backflow correction.
+ * 
+ */
+
 import java.util.ArrayList;
 
 //Holds values for a single day. PNI = probability not infected

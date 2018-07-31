@@ -1,3 +1,6 @@
+/* Used in simulation rendering. 
+ * 
+ */
 
 public class Location {
 	public double x;

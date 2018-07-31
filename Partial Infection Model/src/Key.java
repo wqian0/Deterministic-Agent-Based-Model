@@ -1,3 +1,7 @@
+/* Key of the format (v1, v2); indistinguishable from (v2, v1). Can be used in HashMaps.
+ * 
+ */
+
 public class Key {
 
     private Vertice x;

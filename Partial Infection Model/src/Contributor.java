@@ -1,3 +1,6 @@
+/* Struct used for backflow correction.
+ * 
+ */
 
 public class Contributor {
 	public Vertice v;

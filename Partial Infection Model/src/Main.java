@@ -29,23 +29,25 @@ import java.util.SplittableRandom;
 public class Main {
 
 	// Set this to true for simulations and analysis using the full graph G_F
-	static final boolean fullGraphMode = false;
+	static final boolean fullGraphMode = true;
 
 	// Windows-based directory. Use forward slash for Linux. 
 	static final String inputDirectory = "C:\\Simulation Input\\";
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=0.3;
-	static final int latentPeriod=30;
-	static final int infectiousPeriod=15;
+	static final double transmissionProbability=0.1;
+	static final int latentPeriod=1;
+	static final int infectiousPeriod=3;
 	static final int contactsPerHour=3;
+	
+	//Used for vaccination distribution analysis
 	static final int numCentralities=4;
 
 	//number of graphs rotated through in the dynamic graph
 	static final int numDayGraphs=5;
 	
 	//seeded random for use in stochastic model.  
-	static final SplittableRandom RNG = new SplittableRandom(177);
+	static final SplittableRandom RNG = new SplittableRandom();
 
 	// read edges from an input file, assuming the vertices are in the hashmap
 	public static ArrayList<Edge> getEdges(Scanner sc, HashMap<String,Vertice> map, int day)
@@ -399,23 +401,6 @@ public class Main {
 		}
 	}
 
-	public static void showAllEdges(ArrayList<HashMap<Key,Edge>> allEdges)
-	{
-		int day = 0; 
-		String days[]={new String("Monday"), new String("Tuesday"), new String("Wednesday"), new String("Thursday"), new String("Friday")};
-		for(HashMap<Key,Edge> es: allEdges)
-		{
-			System.out.println(" edges on day "+days[day++]+ " total edges: " + es.size());
-
-			int count=0;
-			for(Edge e:es.values())
-			{
-				System.out.println(e.toString());
-				if(count++>10) break;
-			}
-		}
-	}
-
 	public static Graph getGraph(Scanner v, Scanner e,HashMap<String, Vertice> map, int day) 
 	{
 		ArrayList<Vertice> temp = getVertices(map, v);
@@ -449,56 +434,32 @@ public class Main {
 				}
 			}
 		}
-		for(Vertice v: vertices)
+		if(!fullGraph)
 		{
-			if(!fullGraph)
+			for(Vertice v: vertices)
 			{
 				for(int i=0; i<numDayGraphs; i++)
 				{
 					v.getContactsPerDay().add(storedResults.get(v).get(i)*contactFactor);
 				}
+				v.setRoundedContacts();
 			}
-			else
+		}
+		else
+		{
+			for(Vertice v: vertices)
 			{
-
 				for(int i=0; i<numDayGraphs; i++)
 				{
 					sum+=storedResults.get(v).get(i)*contactFactor;
 				}
 				v.getContactsPerDay().add(sum/=numDayGraphs);
+				v.setRoundedContacts();
 			}
-			v.setRoundedContacts();
 		}
 	}
-	public static double getMean(double[] array)
-	{
-		double sum = 0.0;
-		for(double a : array)
-			sum += a;
-		return sum/array.length;
-	}
-	public static double getVariance(double[] array)
-	{
-		double mean = getMean(array);
-		double temp = 0;
-		for(double a :array)
-			temp += (a-mean)*(a-mean);
-		return temp/(array.length-1);
-	}
-	public static double getstdDev(double[] array)
-	{
-		return Math.sqrt(getVariance(array));
-	}
-	public static double median(double[] array) 
-	{
-		Arrays.sort(array);
-
-		if (array.length % 2 == 0) 
-		{
-			return (array[(array.length / 2) - 1] + array[array.length / 2]) / 2.0;
-		} 
-		return array[array.length / 2];
-	}
+	
+	
 	public static double getMean(ArrayList<Double> array)
 	{
 		double sum = 0.0;
@@ -522,29 +483,14 @@ public class Main {
 	{
 		return getstdDev(array)/Math.sqrt(array.size());
 	}
-	public static double median(ArrayList<Double> array) 
-	{
-		Collections.sort(array);
-
-		if (array.size() % 2 == 0) 
-		{
-			return (array.get((array.size() / 2) - 1) + array.get(array.size() / 2) / 2.0);
-		} 
-		return array.get(array.size() / 2);
-	}
-
-
+	
 	//Reads file with properties of each vertex and inputs them in the centralities arraylist.
 	/* Input file format is as follows:
 	name	BetweennessCentrality	ClosenessCentrality	Degree	CCC
 	...		...						...					...		...
-
 	 */
-
 	public static void addCentralities(Scanner nodeProperties, HashMap<String, Vertice> map, int numProperties)
 	{
-		//Number of features to be processed
-
 		//Skipping the title line
 		nodeProperties.nextLine();
 		String next;
@@ -698,7 +644,6 @@ public class Main {
 			DS.reset(true);
 		}
 		// Prints the mean, standard error, and standard deviation of the expected total ever infected/expected num recovered to console only
-		
 		double mean = getMean(analysisArray);
 		double stdError = getstdError(analysisArray);
 		double stdDev = getstdDev(analysisArray);
@@ -727,7 +672,6 @@ public class Main {
 			SS.reset(true);
 		}
 		// Prints the mean, standard error, and standard deviation of the expected total ever infected/expected num recovered to console only
-		
 		double mean = getMean(analysisArray);
 		double stdError = getstdError(analysisArray);
 		double stdDev = getstdDev(analysisArray);

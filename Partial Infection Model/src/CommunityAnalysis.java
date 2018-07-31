@@ -1,3 +1,9 @@
+/* Class used for:
+ * - Calculating NMI metic between graphs
+ * - Converting and using I/O input data
+ */
+
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,54 +15,7 @@ import java.util.Scanner;
 public class CommunityAnalysis {
 	
 	static final String inputDirectory = "C:\\Simulation Input\\";
-	
-	public static HashMap<Integer, ArrayList<String>> getCommunities(Scanner sc)
-	{
-		HashMap<Integer, ArrayList<String>> communities = new HashMap<>(); 
-		ArrayList<String> temp = new ArrayList<>();
-		sc.nextLine();
-		int current=0;
-		
-		while(sc.hasNextLine())
-		{
-			current=sc.nextInt();
-			if(communities.containsKey(current))
-				communities.get(current).add(sc.next());
-			else
-			{
-				temp.add(sc.next());
-				communities.put(current, new ArrayList<String>(temp));
-				temp.clear();
-			}
-		}
-		return communities;
-	}
-	public static ArrayList<Community> convertFormat(HashMap<Integer, ArrayList<String>> input)
-	{
-		Iterator<Integer> it = input.keySet().iterator();
-		ArrayList<Community> result = new ArrayList<>();
-		Community temp;
-		Integer x;
-		while(it.hasNext())
-		{
-			x= it.next();
-			temp = new Community();
-			temp.list=input.get(x);
-			temp.communityID=x;
-			result.add(temp);
-		}
-		return result;
-	}
-	public static ArrayList<ArrayList<String>> convertToList(HashMap<Integer, ArrayList<String>> input)
-	{
-		ArrayList<ArrayList<String>> result= new ArrayList<>();
-		Iterator<Integer> it = input.keySet().iterator();
-		while(it.hasNext())
-		{
-			result.add(input.get(it.next()));
-		}
-		return result;
-	}
+
 	public static int countUnion(ArrayList<ArrayList<String>> c1, ArrayList<ArrayList<String>> c2)
 	{
 		int intersection=0;
@@ -85,6 +44,7 @@ public class CommunityAnalysis {
 		}
 		return total-intersection;
 	}
+	
 	public static double jaccardIndex(Community c1, Community c2)
 	{
 		double intersection=0;
@@ -157,6 +117,55 @@ public class CommunityAnalysis {
 			total+=P(i.get(c),j,totalSize);
 		return total;
 	}
+	
+	public static HashMap<Integer, ArrayList<String>> getCommunities(Scanner sc)
+	{
+		HashMap<Integer, ArrayList<String>> communities = new HashMap<>(); 
+		ArrayList<String> temp = new ArrayList<>();
+		sc.nextLine();
+		int current=0;
+		
+		while(sc.hasNextLine())
+		{
+			current=sc.nextInt();
+			if(communities.containsKey(current))
+				communities.get(current).add(sc.next());
+			else
+			{
+				temp.add(sc.next());
+				communities.put(current, new ArrayList<String>(temp));
+				temp.clear();
+			}
+		}
+		return communities;
+	}
+	public static ArrayList<Community> convertFormat(HashMap<Integer, ArrayList<String>> input)
+	{
+		Iterator<Integer> it = input.keySet().iterator();
+		ArrayList<Community> result = new ArrayList<>();
+		Community temp;
+		Integer x;
+		while(it.hasNext())
+		{
+			x= it.next();
+			temp = new Community();
+			temp.list=input.get(x);
+			temp.communityID=x;
+			result.add(temp);
+		}
+		return result;
+	}
+	public static ArrayList<ArrayList<String>> convertToList(HashMap<Integer, ArrayList<String>> input)
+	{
+		ArrayList<ArrayList<String>> result= new ArrayList<>();
+		Iterator<Integer> it = input.keySet().iterator();
+		while(it.hasNext())
+		{
+			result.add(input.get(it.next()));
+		}
+		return result;
+	}
+	
 	public static double[][] getTable(ArrayList<Scanner> input)
 	{
 		double[][] results = new double[input.size()][input.size()];
