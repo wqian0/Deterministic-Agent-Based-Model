@@ -721,7 +721,7 @@ public class Main {
 	}
 	
 	//Used to take day-by-day averages of stochastic outbreak trials.
-	public static void runStaticSimulationTrials(StaticSimulation SS, Vertice initInfectious, int numTrials, int outbreakThreshold, int outbreakTrialThreshold, PrintWriter pw)
+	public static void runStaticSimulationTrials(StaticSimulation SS, Vertice initInfectious, int numTrials,int numDays, int outbreakThreshold, int outbreakTrialThreshold, PrintWriter pw)
 	{
 		ArrayList<Double> analysisArray = new ArrayList<>();
 		int recovered=0;
@@ -733,7 +733,7 @@ public class Main {
 		ArrayList<ArrayList<Double>> infectedData = new ArrayList<>();
 		ArrayList<ArrayList<Double>> recoveredData = new ArrayList<>();
 		
-		for(int i=0; i<100; i++)
+		for(int i=0; i<numDays; i++)
 		{
 			suscData.add(new ArrayList<>());
 			exposedData.add(new ArrayList<>());
@@ -772,7 +772,7 @@ public class Main {
 		
 		for(int i=0; i<data.size(); i++)
 		{
-			for(int j=0; j<100; j++)
+			for(int j=0; j<numDays; j++)
 			{
 				if(data.get(i).size()>j)
 				{
@@ -783,7 +783,7 @@ public class Main {
 				}
 			}
 		}
-		for(int i=0; i<100; i++)
+		for(int i=0; i<numDays; i++)
 		{
 			System.out.print(getMean(suscData.get(i))+"\t"+getMean(exposedData.get(i))+"\t"+getMean(infectedData.get(i))+"\t"+getMean(recoveredData.get(i)));
 			System.out.print("\t"+getstdError(suscData.get(i))+"\t"+getstdError(exposedData.get(i))+"\t"+getstdError(infectedData.get(i))+"\t"+getstdError(recoveredData.get(i)));
@@ -811,7 +811,7 @@ public class Main {
 	
 	
 	//Used to take day-by-day averages of stochastic outbreak trials.
-	public static void runDynamicSimulationTrials(DynamicSimulation DS, Vertice initInfectious, int numTrials, int outbreakThreshold, int outbreakTrialThreshold, PrintWriter pw)
+	public static void runDynamicSimulationTrials(DynamicSimulation DS, Vertice initInfectious, int numTrials, int numDays, int outbreakThreshold, int outbreakTrialThreshold, PrintWriter pw)
 	{
 		ArrayList<Double> analysisArray = new ArrayList<>();
 		int recovered=0;
@@ -823,7 +823,7 @@ public class Main {
 		ArrayList<ArrayList<Double>> exposedData = new ArrayList<>();
 		ArrayList<ArrayList<Double>> infectedData = new ArrayList<>();
 		ArrayList<ArrayList<Double>> recoveredData = new ArrayList<>();
-		for(int i=0; i<150; i++)
+		for(int i=0; i<numDays; i++)
 		{
 			suscData.add(new ArrayList<>());
 			exposedData.add(new ArrayList<>());
@@ -865,7 +865,7 @@ public class Main {
 		
 		for(int i=0; i<data.size(); i++)
 		{
-			for(int j=0; j<150; j++)
+			for(int j=0; j<numDays; j++)
 			{
 				if(data.get(i).size()>j)
 				{
@@ -876,7 +876,7 @@ public class Main {
 				}
 			}
 		}
-		for(int i=0; i<150; i++)
+		for(int i=0; i<numDays; i++)
 		{
 			System.out.print(getMean(suscData.get(i))+"\t"+getMean(exposedData.get(i))+"\t"+getMean(infectedData.get(i))+"\t"+getMean(recoveredData.get(i)));
 			System.out.print("\t"+getstdError(suscData.get(i))+"\t"+getstdError(exposedData.get(i))+"\t"+getstdError(infectedData.get(i))+"\t"+getstdError(recoveredData.get(i)));
