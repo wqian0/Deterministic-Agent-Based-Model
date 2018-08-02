@@ -15,10 +15,13 @@ public class Vertice{
 
 	private double expectedSickTime;
 	private double cumulatedProbability;
+	private double maxCProbability;
+	
 	private int infectiousPd;
 	private int latentPd;
 	private boolean vaccinated;
 	private boolean recovered;
+	
  //holding values in queue to be undone after 3 days
 	private PNITracker[] trackers;  //The Q[u] property
 	private PNITracker todayTracker; //The T[u] property
@@ -48,6 +51,7 @@ public class Vertice{
 		vaccinated=false;
 		
 		cumulatedProbability=0;
+		maxCProbability=0;
 		expectedSickTime=0;
 		todayTracker = new PNITracker();
 		contactsPerDay=new ArrayList<>();
@@ -58,6 +62,7 @@ public class Vertice{
 		state=HealthState.susceptible;
 		recovered=false;
 		cumulatedProbability=0;
+		maxCProbability=0;
 		expectedSickTime=0;
 		searchPlaceholder=0;
 		resetTrackerArray();
@@ -230,9 +235,9 @@ public class Vertice{
 		for(PNITracker p: trackers)
 			p.PNI=1-d;
 	}
-	public void setExpectedSickTime(double d)
+	public double getExpectedSickTime()
 	{
-		expectedSickTime=d;
+		return expectedSickTime;
 	}
 	public void compoundCumulation(double d, Vertice source)
 	{
@@ -281,6 +286,8 @@ public class Vertice{
 	{
 		expectedSickTime+=cumulatedProbability;
 		addNewProbability();
+		if(cumulatedProbability>maxCProbability)
+			maxCProbability= cumulatedProbability;
 		if(expectedSickTime>=infectiousPd) 
 		{
 			recovered=true;
@@ -288,5 +295,8 @@ public class Vertice{
 		}
 		todayTracker = new PNITracker();
 	} 
-
+	public double getMaxCProbability()
+	{
+		return maxCProbability;
+	}
 }

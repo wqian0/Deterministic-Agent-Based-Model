@@ -16,6 +16,7 @@ public class DynamicSimulation {
 	private double totalEverInfected;
 	private double previousTotal; 
 	private double currentTotal;
+	private double currentInfected;
 
 	private int latentPd;
 	private int infectiousPd;
@@ -37,6 +38,7 @@ public class DynamicSimulation {
 
 		previousTotal=0;
 		currentTotal=0;
+		currentInfected=0;
 		totalEverInfected=0;
 		weightRanks=new ArrayList<>();
 		setWeightRanks();
@@ -224,13 +226,13 @@ public class DynamicSimulation {
 	}
 	public void simul()
 	{
-		System.out.println("day \t S \t E \t I \t R");
+	//	System.out.println("day \t S \t E \t I \t R");
 		while(hasRemaining())
 		{
-			show();
+	//		show();
 			runDay();
 		}
-		show();
+	//	show();
 	}
 
 	//	Functions for the deterministic version below:
@@ -323,13 +325,15 @@ public class DynamicSimulation {
 	}
 	public void trickleSimul()
 	{
-		currentTotal=expectedNumInfected();
-		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<50)
+		currentInfected = expectedNumInfected();
+		currentTotal=currentInfected;
+		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
 		{
 			previousTotal=currentTotal;
 			runTrickleDay();
-			currentTotal=expectedNumInfected();
-			totalEverInfected+=currentTotal;
+			currentInfected=expectedNumInfected();
+			currentTotal=currentInfected+expectedNumExposed();
+			totalEverInfected+=currentInfected;
 		}
 	}
 	public void showTrickle()
@@ -384,8 +388,9 @@ public class DynamicSimulation {
 		}
 		return result; 
 	}
+	
 	public double getTotalEverInfected()
 	{
-		return totalEverInfected/infectiousPd;
+		return totalEverInfected/(infectiousPd);
 	}
 }

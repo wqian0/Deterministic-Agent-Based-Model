@@ -15,6 +15,7 @@ public class StaticSimulation {
 	private double totalEverInfected;
 	private double previousTotal; 
 	private double currentTotal;
+	private double currentInfected;
 
 	private int latentPd;
 	private int infectiousPd;
@@ -34,6 +35,7 @@ public class StaticSimulation {
 		previousTotal=0;
 		currentTotal=0;
 		totalEverInfected=0;
+		currentInfected=0;
 		weightRanks=new HashMap<>();
 		setWeightRanks();
 		cumulativeData = new ArrayList<>();
@@ -72,6 +74,7 @@ public class StaticSimulation {
 		currentTotal=0;
 		previousTotal=0;
 		totalEverInfected=0;
+		currentInfected=0;
 		cumulativeData = new ArrayList<>();
 	}
 	public void setInfected(ArrayList<Vertice> input)
@@ -210,13 +213,13 @@ public class StaticSimulation {
 	}
 	public void simul()
 	{
-		System.out.println("day \t S \t E \t I \t R");
+	//	System.out.println("day \t S \t E \t I \t R");
 		while(hasRemaining())
 		{
-			show();
+	//		show();
 			runDay();
 		}
-		show();
+	//	show();
 	}
 
 	//	Functions for the deterministic version below:
@@ -301,13 +304,15 @@ public class StaticSimulation {
 	}
 	public void trickleSimul()
 	{
-		currentTotal=expectedNumInfected();
-		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<50)
+		currentInfected = expectedNumInfected();
+		currentTotal=currentInfected;
+		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
 		{
 			previousTotal=currentTotal;
 			runTrickleDay();
-			currentTotal=expectedNumInfected();
-			totalEverInfected+=currentTotal;
+			currentInfected=expectedNumInfected();
+			currentTotal=currentInfected+expectedNumExposed();
+			totalEverInfected+=currentInfected;
 		}
 	}
 	public void showTrickle()
