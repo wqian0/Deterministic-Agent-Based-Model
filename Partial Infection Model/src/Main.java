@@ -1,5 +1,5 @@
 /*
-Main.java - Class is used to execute the Simulation and DynamicSimulation classes. 
+Main.java - Class is used to execute the StaticSimulation and DynamicSimulation classes. 
 Available functions include:
   -Executing Reactionary Vaccination Simulations
   -Executing Preemptive Vaccination Simulations
@@ -7,10 +7,6 @@ Available functions include:
   -Executing Simulations with Dynamic Graphs
   -Creating Meta-graphs
 
-Written in 2017-2018 by William Qian (billy3808@gmail.com)
-
-To the extent possible under law, the author(s) have dedicated all copyright and related 
-and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty.
  */
 
 import java.io.File;
