@@ -6,7 +6,6 @@ Available functions include:
   -Executing Simulations with Static Graphs
   -Executing Simulations with Dynamic Graphs
   -Creating Meta-graphs
-
  */
 
 import java.io.File;
