@@ -267,6 +267,7 @@ public class Vertice{
 	{
 		recovered=input;
 	}
+	//shifts queue for tracking contributors and calculates cumulatedProbability
 	public void addNewProbability()
 	{
 		double t= 1.0;
