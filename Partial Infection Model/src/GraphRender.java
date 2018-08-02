@@ -1,3 +1,4 @@
+// Used to render simulations.
 
 import java.io.File;
 import java.io.FileNotFoundException;
