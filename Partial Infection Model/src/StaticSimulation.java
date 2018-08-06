@@ -232,7 +232,7 @@ public class StaticSimulation {
 	//	System.out.println("day \t S \t E \t I \t R");
 		while(hasRemaining())
 		{
-	//		show();
+		//	show();
 			runDay();
 			if(cumulativeData.get(day-1)[2]>peakInfected)
 			{
@@ -330,6 +330,7 @@ public class StaticSimulation {
 		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 		currentInfected = expectedNumInfected();
 		currentTotal=currentInfected;
+		showTrickle();
 		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
 		{
 			previousTotal=currentTotal;

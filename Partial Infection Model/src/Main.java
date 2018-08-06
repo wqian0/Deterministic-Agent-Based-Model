@@ -760,6 +760,7 @@ public class Main {
 			{
 				i--;
 				count++;
+				SS.reset(true);
 				if(count>outbreakTrialThreshold)
 				{
 					System.out.println(initInfectious.getID()+"\t No outbreak observed");
@@ -769,7 +770,7 @@ public class Main {
 			}
 			else 
 			{
-				analysisArray.add((double)SS.getNumResistant());
+				analysisArray.add((double)recovered);
 				data.add(SS.getData());
 				SS.reset(true);
 				count=0;
@@ -852,11 +853,11 @@ public class Main {
 			{
 				i--;
 				count++;
+				DS.reset(true);
 				if(count>outbreakTrialThreshold)
 				{
-					System.out.println(initInfectious.getID()+"\t"+DS.getNumResistant()+"\t No outbreak observed");
+					System.out.println(initInfectious.getID()+"\t"recovered+"\t No outbreak observed");
 					pw.println(initInfectious.getID()+"\t No outbreak observed");
-					DS.reset(true);
 					//	return;
 				}
 			}
@@ -1003,7 +1004,7 @@ public class Main {
 			StaticSimulation SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
 			//runStaticSimulation(SS,vertices.get(0),true,true);
 			
-			runStaticSimulationTrials(SS,vertices.get(0), 100,200,(int)(vertices.size()*.1),30,pw );
+			runStaticSimulationTrials(SS,vertices.get(0), 100,200,(int)(vertices.size()*.25),30,pw );
 		}
 		else
 		{
