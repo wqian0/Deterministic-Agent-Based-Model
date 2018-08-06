@@ -17,6 +17,8 @@ public class DynamicSimulation {
 	private double previousTotal; 
 	private double currentTotal;
 	private double currentInfected;
+	private double peakInfected;
+	private int peakDayInfected;
 
 	private int latentPd;
 	private int infectiousPd;
@@ -40,6 +42,8 @@ public class DynamicSimulation {
 		currentTotal=0;
 		currentInfected=0;
 		totalEverInfected=0;
+		peakInfected=0;
+		peakDayInfected=0;
 		weightRanks=new ArrayList<>();
 		setWeightRanks();
 		cumulativeData = new ArrayList<>();
@@ -94,6 +98,8 @@ public class DynamicSimulation {
 		previousTotal=0;
 		totalEverInfected=0;
 		currentInfected=0;
+		peakInfected=0;
+		peakDayInfected=0;
 		cumulativeData = new ArrayList<>();
 	}
 	public void setInfected(ArrayList<Vertice> input)
@@ -139,7 +145,16 @@ public class DynamicSimulation {
 				count++;
 		return count;
 	}
-
+	
+	public double getPeakInfected()
+	{
+		return peakInfected;
+	}
+	
+	public int getPeakDayInfected()
+	{
+		return peakDayInfected;
+	}
 	public boolean hasRemaining()
 	{
 		for(Vertice v: vertices)
@@ -232,6 +247,11 @@ public class DynamicSimulation {
 		{
 	//		show();
 			runDay();
+			if(cumulativeData.get(day-1)[2]>peakInfected)
+			{
+				peakInfected=cumulativeData.get(day-1)[2];
+				peakDayInfected=day-1;
+			}
 		}
 	//	show();
 	}
@@ -326,6 +346,7 @@ public class DynamicSimulation {
 	}
 	public void trickleSimul()
 	{
+		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 		currentInfected = expectedNumInfected();
 		currentTotal=currentInfected;
 		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
@@ -333,6 +354,11 @@ public class DynamicSimulation {
 			previousTotal=currentTotal;
 			runTrickleDay();
 			currentInfected=expectedNumInfected();
+			if(currentInfected>peakInfected)
+			{
+				peakInfected=currentInfected;
+				peakDayInfected=day;
+			}
 			currentTotal=currentInfected+expectedNumExposed();
 			totalEverInfected+=currentInfected;
 		}

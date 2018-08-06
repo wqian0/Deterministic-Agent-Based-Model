@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 public class Graph {
 	private ArrayList<Vertice> vertices;
-	private HashMap<String, Vertice> map;
 	private ArrayList<Edge> edgeList;
 	private int numVertices;
 	private int numEdges;
@@ -12,9 +11,6 @@ public class Graph {
 		this.dayID =dayID;
 		this.edgeList=edgeList;
 		this.vertices=vertices;
-		map = new HashMap<>();
-		for(Vertice v: vertices)
-			map.put(v.getID(), v);
 		numVertices = vertices.size();
 		numEdges = edgeList.size();
 	}
@@ -41,10 +37,6 @@ public class Graph {
 	public ArrayList<Vertice> getVertices()
 	{
 		return vertices;
-	}
-	public Vertice getVertice(String ID)
-	{
-		return map.get(ID);
 	}
 	public ArrayList<Edge> getEdges()
 	{

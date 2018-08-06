@@ -16,6 +16,8 @@ public class StaticSimulation {
 	private double previousTotal; 
 	private double currentTotal;
 	private double currentInfected;
+	private double peakInfected;
+	private int peakDayInfected;
 
 	private int latentPd;
 	private int infectiousPd;
@@ -36,6 +38,8 @@ public class StaticSimulation {
 		currentTotal=0;
 		totalEverInfected=0;
 		currentInfected=0;
+		peakInfected=0;
+		peakDayInfected=0;
 		weightRanks=new HashMap<>();
 		setWeightRanks();
 		cumulativeData = new ArrayList<>();
@@ -75,6 +79,8 @@ public class StaticSimulation {
 		previousTotal=0;
 		totalEverInfected=0;
 		currentInfected=0;
+		peakInfected=0;
+		peakDayInfected=0;
 		cumulativeData = new ArrayList<>();
 	}
 	public void setInfected(ArrayList<Vertice> input)
@@ -117,7 +123,15 @@ public class StaticSimulation {
 				count++;
 		return count;
 	}
-
+	
+	public double getPeakInfected()
+	{
+		return peakInfected;
+	}
+	public int getPeakDayInfected()
+	{
+		return peakDayInfected;
+	}
 	public boolean hasRemaining()
 	{
 		for(Vertice v: vertices)
@@ -141,6 +155,7 @@ public class StaticSimulation {
 				return true;	
 		return false;
 	}
+	
 	public Vertice generateRandContact(Vertice v)
 	{
 		if(!v.hasContactsRemaining(0))
@@ -211,6 +226,7 @@ public class StaticSimulation {
 		}
 		day++;
 	}
+	
 	public void simul()
 	{
 	//	System.out.println("day \t S \t E \t I \t R");
@@ -218,10 +234,16 @@ public class StaticSimulation {
 		{
 	//		show();
 			runDay();
+			if(cumulativeData.get(day-1)[2]>peakInfected)
+			{
+				peakInfected=cumulativeData.get(day-1)[2];
+				peakDayInfected=day-1;
+			}
 		}
 	//	show();
 	}
 
+	
 	//	Functions for the deterministic version below:
 
 
@@ -232,7 +254,6 @@ public class StaticSimulation {
 			v.setCumulation(1.0);		
 			v.getTracker()[latentPd-1].PNI=0;
 			v.setProbNotRecovered(1);
-			v.setVaccinationState(false);
 		}
 	}	
 	public void setTrickler(Vertice v)
@@ -240,7 +261,6 @@ public class StaticSimulation {
 		v.setCumulation(1.0);		
 		v.getTracker()[latentPd-1].PNI=0;
 		v.setProbNotRecovered(1);
-		v.setVaccinationState(false);
 	}
 
 	//pre-calculates tProb*contactProb for each directed pair of vertices
@@ -307,6 +327,7 @@ public class StaticSimulation {
 	}
 	public void trickleSimul()
 	{
+		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 		currentInfected = expectedNumInfected();
 		currentTotal=currentInfected;
 		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
@@ -314,6 +335,11 @@ public class StaticSimulation {
 			previousTotal=currentTotal;
 			runTrickleDay();
 			currentInfected=expectedNumInfected();
+			if(currentInfected>peakInfected)
+			{
+				peakInfected=currentInfected;
+				peakDayInfected=day;
+			}
 			currentTotal=currentInfected+expectedNumExposed();
 			totalEverInfected+=currentInfected;
 		}

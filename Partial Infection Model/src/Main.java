@@ -797,7 +797,7 @@ public class Main {
 		for(int i=0; i<numDays; i++)
 		{
 			System.out.print(getMean(suscData.get(i))+"\t"+getMean(exposedData.get(i))+"\t"+getMean(infectedData.get(i))+"\t"+getMean(recoveredData.get(i)));
-			System.out.print("\t"+getstdError(suscData.get(i))+"\t"+getstdError(exposedData.get(i))+"\t"+getstdError(infectedData.get(i))+"\t"+getstdError(recoveredData.get(i)));
+			System.out.print("\t"+getstdDev(suscData.get(i))+"\t"+getstdDev(exposedData.get(i))+"\t"+getstdDev(infectedData.get(i))+"\t"+getstdDev(recoveredData.get(i)));
 			System.out.println();
 		}
 	}
@@ -1016,25 +1016,6 @@ public class Main {
 			Graph[] graphList = {mondayGraph,tuesdayGraph,wednesdayGraph,thursdayGraph,fridayGraph};
 
 			DynamicSimulation DS = new DynamicSimulation(graphList,vertices,transmissionProbability,latentPeriod,infectiousPeriod);
-
-
-		/*	
-			for(int i=1000; i>=200; i-=200)
-				for(int j=0; j<4; j++)
-				{
-					System.out.println(i+"\t"+j);
-					runReactionaryVaccDS(DS,Meta, dist, commMap,map, i, j, true);
-				}
-*/
-			for(int i=1000; i>=200; i-=200)
-			{
-				System.out.println(i+"\t"+3+"\t low global");
-			//	runReactionaryVaccDS(DS,Meta, dist, commMap,map, i, 3, false);
-				globalVaccDS(DS,map,3,1000,false);
-			}
-			
-		//	globalVaccDS(DS,map,0,1000,true);
-		//	runReactionaryVaccDS(DS,Meta,dist,commMap,map,800,0,true);
 		}
 		experiment.close();
 	}
