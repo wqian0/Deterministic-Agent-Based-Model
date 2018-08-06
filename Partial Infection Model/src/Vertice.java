@@ -13,15 +13,14 @@ public class Vertice{
 	public double searchPlaceholder;
 	public int day;
 
-	private double expectedSickTime;
 	private double cumulatedProbability;
-	private double maxCProbability;
 	
 	private int infectiousPd;
 	private int latentPd;
 	private boolean vaccinated;
-	private boolean recovered;
 	
+	private double probNotRecovered;
+	private double probInfectedFromContacts; //probability vertex is infected *given* that it is not recovered
  //holding values in queue to be undone after 3 days
 	private PNITracker[] trackers;  //The Q[u] property
 	private PNITracker todayTracker; //The T[u] property
@@ -47,12 +46,12 @@ public class Vertice{
 		
 		centralities = new ArrayList<>();
 		
-		recovered=false;
 		vaccinated=false;
 		
+		probNotRecovered=1;
+		
 		cumulatedProbability=0;
-		maxCProbability=0;
-		expectedSickTime=0;
+		probInfectedFromContacts=0;
 		todayTracker = new PNITracker();
 		contactsPerDay=new ArrayList<>();
 		roundedContacts=new ArrayList<>();
@@ -60,13 +59,14 @@ public class Vertice{
 	public void reset()
 	{
 		state=HealthState.susceptible;
-		recovered=false;
 		cumulatedProbability=0;
-		maxCProbability=0;
-		expectedSickTime=0;
 		searchPlaceholder=0;
 		resetTrackerArray();
 		resetRemainingContacts();
+		vaccinated=false;
+		
+		probNotRecovered=1;
+		probInfectedFromContacts=0;
 	}
 
 	public String getID()
@@ -120,6 +120,10 @@ public class Vertice{
 	public void setVaccinationState(boolean input)
 	{
 		vaccinated=input;
+	}
+	public void setProbNotRecovered(double input)
+	{
+		probNotRecovered=input;
 	}
 	public ArrayList<Double> getContactsPerDay()
 	{
@@ -232,12 +236,6 @@ public class Vertice{
 	public void setCumulation(Double d)
 	{
 		cumulatedProbability = d;
-		for(PNITracker p: trackers)
-			p.PNI=1-d;
-	}
-	public double getExpectedSickTime()
-	{
-		return expectedSickTime;
 	}
 	public void compoundCumulation(double d, Vertice source)
 	{
@@ -259,18 +257,20 @@ public class Vertice{
 	{
 		return cumulatedProbability;
 	}
-	public boolean getRecoveryState()
+	
+	public double getProbNotRecovered()
 	{
-		return recovered;
+		return probNotRecovered;
 	}
-	public void setRecoveryState(boolean input)
+	public double getProbInfectedFromContacts()
 	{
-		recovered=input;
+		return probInfectedFromContacts;
 	}
 	//shifts queue for tracking contributors and calculates cumulatedProbability
 	public void addNewProbability()
 	{
 		double t= 1.0;
+		probNotRecovered*=trackers[trackers.length-1].PNI;
 		for(int i=trackers.length-1; i>=1; i--)
 		{
 			trackers[i].setValues(trackers[i-1]);
@@ -281,23 +281,12 @@ public class Vertice{
 		{
 			t*=trackers[i].PNI;
 		}
-		cumulatedProbability=1-t;
+		probInfectedFromContacts=1-t;
+		cumulatedProbability=probInfectedFromContacts*probNotRecovered;
 	}
 	public void checkCumulationRecovery()
 	{
-		expectedSickTime+=cumulatedProbability;
 		addNewProbability();
-		if(cumulatedProbability>maxCProbability)
-			maxCProbability= cumulatedProbability;
-		if(expectedSickTime>=infectiousPd) 
-		{
-			recovered=true;
-			cumulatedProbability=0;
-		}
 		todayTracker = new PNITracker();
 	} 
-	public double getMaxCProbability()
-	{
-		return maxCProbability;
-	}
 }

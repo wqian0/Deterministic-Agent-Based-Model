@@ -23,7 +23,7 @@ import java.util.SplittableRandom;
 public class Main {
 
 	// Set this to true for simulations and analysis using the full graph G_F
-	static final boolean fullGraphMode = false;
+	static final boolean fullGraphMode = true;
 
 	// Windows-based directory. Use forward slash for Linux. 
 	static final String inputDirectory = "C:\\Simulation Input\\";
@@ -41,7 +41,7 @@ public class Main {
 	static final int numDayGraphs=5;
 
 	//seeded random for use in stochastic model.  
-	static final SplittableRandom RNG = new SplittableRandom(1977);
+	static final SplittableRandom RNG = new SplittableRandom(1981);
 
 	// read edges from an input file, assuming the vertices are in the hashmap
 	public static ArrayList<Edge> getEdges(Scanner sc, HashMap<String,Vertice> map, int day)
@@ -108,7 +108,7 @@ public class Main {
 			{
 				if(vCopy.get(j).getCumulation()==0)
 				{
-					vCopy.get(j).setRecoveryState(true);
+					vCopy.get(j).setProbNotRecovered(0);
 					vCopy.get(j).setVaccinationState(true);
 				}
 			}
@@ -119,7 +119,7 @@ public class Main {
 			{
 				if(vCopy.get(j).getCumulation()==0)
 				{
-					vCopy.get(j).setRecoveryState(true);
+					vCopy.get(j).setProbNotRecovered(0);
 					vCopy.get(j).setVaccinationState(true);
 				}
 			}
@@ -129,21 +129,18 @@ public class Main {
 	{
 		ArrayList<Vertice> vertices = new ArrayList<>(map.values());
 		ArrayList<Double> analysisArray = new ArrayList<>();
-		ArrayList<Double> analysisArrayRecovered = new ArrayList<>();
+	//	ArrayList<Double> analysisArrayRecovered = new ArrayList<>();
 		vaccGlobalPeaks(vertices, traitID, vaccines, pickHigh);
 
 		for(Vertice v: vertices)
 		{
-			if(!v.getVaccinationState())
-			{
 				DS.setTrickler(v);
 				DS.setStartDay(v.getStartingPoint());
 				DS.trickleSimul();
 				analysisArray.add(DS.getTotalEverInfected());
-				analysisArrayRecovered.add(DS.numRecovered());
-				System.out.println(v.getID()+"\t" +traitID+"\t"+ DS.getTotalEverInfected());
+	//			analysisArrayRecovered.add(DS.numRecovered());
+	//			System.out.println(v.getID()+"\t" +v.getVaccinationState()+"\t"+traitID+"\t"+ DS.getTotalEverInfected()+"\t"+getMean(analysisArray));
 				DS.reset(false);
-			}
 		}
 		DS.reset(true);
 
@@ -152,10 +149,10 @@ public class Main {
 		double mean = getMean(analysisArray);
 		double stdError = getstdError(analysisArray);
 		double stdDev = getstdDev(analysisArray);
-		double meanR = getMean(analysisArrayRecovered);
-		double stdErrorR = getstdError(analysisArrayRecovered);
-		double stdDevR = getstdDev(analysisArrayRecovered);
-		System.out.println(mean + "\t" + stdDev+"\t"+stdError+"\t --- \t"+meanR+"\t"+stdDevR+"\t"+stdErrorR);
+	//	double meanR = getMean(analysisArrayRecovered);
+	//	double stdErrorR = getstdError(analysisArrayRecovered);
+	//	double stdDevR = getstdDev(analysisArrayRecovered);
+		System.out.println(mean + "\t" + stdDev+"\t"+stdError);
 	}
 	public static void globalVaccSS(StaticSimulation SS, HashMap<String, Vertice> map,int traitID, int vaccines, boolean pickHigh)
 	{
@@ -166,15 +163,12 @@ public class Main {
 
 		for(Vertice v: vertices)
 		{
-			if(!v.getVaccinationState())
-			{
 				SS.setTrickler(v);
 				SS.trickleSimul();
 				analysisArray.add(SS.getTotalEverInfected());
 				analysisArrayRecovered.add(SS.numRecovered());
 				System.out.println(v.getID()+"\t" +traitID+"\t"+ SS.getTotalEverInfected());
 				SS.reset(false);
-			}
 		}
 		SS.reset(true);
 
@@ -198,9 +192,9 @@ public class Main {
 		for(int i=0; i<num; i++)
 		{
 			random=(int)(RNG.nextDouble()*temp.size());
-			if(!vertices.get(random).getRecoveryState())
+			if(vertices.get(random).getProbNotRecovered()!=0)
 			{
-				vertices.get(random).setRecoveryState(true);
+				vertices.get(random).setProbNotRecovered(0);
 				vertices.get(random).setVaccinationState(true);
 			}
 			else
@@ -290,10 +284,13 @@ public class Main {
 		{
 			results.println("Vertex 1 \t Vertex 2 \t Weight");
 			for(int i=0; i<IDs.size(); i++)
+			{
 				for(int j=0; j<IDs.size(); j++)
 				{
 					results.println(IDs.get(i)+"\t"+IDs.get(j)+"\t"+dist[i][j]);
 				}
+				//		System.out.println();
+			}
 		}
 		return dist;
 	}
@@ -515,6 +512,7 @@ public class Main {
 		int vaccinesLeft=totalVaccines;
 		int tempVaccineAmount=0;
 		double totalDistance=0;
+		int currentCommID=-100;
 		HashMap<Integer, Integer> partition = new HashMap<>(); // integer1: community ID . Integer 2: How many vaccines they get
 		for(int i=0; i<communities.getVertices().size(); i++)
 		{
@@ -530,8 +528,9 @@ public class Main {
 		for(int j=0; j<communities.getVertices().size(); j++)
 		{
 			tempVaccineAmount= (int)(((1/dist[index][j])/totalDistance)*totalVaccines);
-			if(commMap.get(Integer.parseInt(communities.getVertices().get(j).getID())).size()<tempVaccineAmount)
-				tempVaccineAmount=commMap.get(Integer.parseInt(communities.getVertices().get(j).getID())).size();
+			currentCommID=Integer.parseInt(communities.getVertices().get(j).getID());
+			if(commMap.get(currentCommID).size()<tempVaccineAmount)
+				tempVaccineAmount=commMap.get(currentCommID).size();
 			partition.put(Integer.parseInt(communities.getVertices().get(j).getID()), tempVaccineAmount);
 			vaccinesLeft-=tempVaccineAmount;
 		}
@@ -539,9 +538,10 @@ public class Main {
 		{
 			for(int j=0; j<communities.getVertices().size(); j++)
 			{
-				if(partition.get(Integer.parseInt(communities.getVertices().get(j).getID()))<commMap.get(Integer.parseInt(communities.getVertices().get(j).getID())).size())
+				currentCommID=Integer.parseInt(communities.getVertices().get(j).getID());
+				if(partition.get(currentCommID)<commMap.get(currentCommID).size())
 				{
-					partition.put(Integer.parseInt(communities.getVertices().get(j).getID()), partition.get(Integer.parseInt(communities.getVertices().get(j).getID()))+1);
+					partition.put((currentCommID), partition.get(currentCommID)+1);
 					vaccinesLeft--;
 					break;
 				}
@@ -588,7 +588,7 @@ public class Main {
 			{
 				for(int i=verticeCommMap.get(x).size()-1; i>=verticeCommMap.get(x).size()-partition.get(x); i--)
 				{
-					verticeCommMap.get(x).get(i).setRecoveryState(true);
+					verticeCommMap.get(x).get(i).setProbNotRecovered(0);
 					verticeCommMap.get(x).get(i).setVaccinationState(true);
 				}
 			}
@@ -599,7 +599,7 @@ public class Main {
 			{
 				for(int i=0; i<partition.get(x); i++)
 				{
-					verticeCommMap.get(x).get(i).setRecoveryState(true);
+					verticeCommMap.get(x).get(i).setProbNotRecovered(0);
 					verticeCommMap.get(x).get(i).setVaccinationState(true);
 				}
 			}
@@ -621,18 +621,20 @@ public class Main {
 	public static void runReactionaryVaccDS(DynamicSimulation DS, Graph Meta, double[][] dist, HashMap<Integer, ArrayList<String>> commMap, HashMap<String, Vertice> map, int vaccines,int traitID, boolean pickHigh)
 	{
 		ArrayList<Double> analysisArray = new ArrayList<>();
-		ArrayList<Double> analysisArrayRecovered = new ArrayList<>();
-
+		//	ArrayList<Double> analysisArrayRecovered = new ArrayList<>();
+		Vertice current;
 		for(Integer x: commMap.keySet())
 		{
 			runRingVacc(Meta, commMap,map, dist, x, vaccines, traitID, pickHigh);
 			for(String s: commMap.get(x))
 			{
-				DS.setTrickler(map.get(s));
-				DS.setStartDay(map.get(s).getStartingPoint());
+				current=map.get(s);
+				DS.setTrickler(current);
+				DS.setStartDay(current.getStartingPoint());
 				DS.trickleSimul();
 				analysisArray.add(DS.getTotalEverInfected());
-				analysisArray.add(DS.numRecovered());
+				//System.out.println(DS.getTotalEverInfected()+"\t"+getMean(analysisArray));
+				//analysisArrayRecovered.add(DS.numRecovered());
 				DS.reset(false);
 			}
 			DS.reset(true);
@@ -641,29 +643,33 @@ public class Main {
 		double mean = getMean(analysisArray);
 		double stdError = getstdError(analysisArray);
 		double stdDev = getstdDev(analysisArray);
-		double meanR = getMean(analysisArrayRecovered);
+
+		/*	double meanR = getMean(analysisArrayRecovered);
 		double stdErrorR = getstdError(analysisArrayRecovered);
 		double stdDevR = getstdDev(analysisArrayRecovered);
 		System.out.println(mean + "\t" + stdDev+"\t"+stdError+"\t --- \t"+meanR+"\t"+stdDevR+"\t"+stdErrorR);
+		 */
+		System.out.println(mean + "\t" + stdDev+"\t"+stdError);
 	}
 
 	public static void runReactionaryVaccSS(StaticSimulation SS, boolean monteCarlo, Graph Meta, double[][] dist, HashMap<Integer, ArrayList<String>> commMap, HashMap<String, Vertice> map, int vaccines,int traitID, boolean pickHigh)
 	{
 		ArrayList<Double> analysisArray = new ArrayList<>();
-		ArrayList<Double> analysisArrayRecovered = new ArrayList<>();
-
+		//	ArrayList<Double> analysisArrayRecovered = new ArrayList<>();
+		Vertice current;
 		for(Integer x: commMap.keySet())
 		{
 			runRingVacc(Meta, commMap,map, dist, x, vaccines, traitID, pickHigh);
-			if(monteCarlo)
+			if(!monteCarlo)
 			{
 				for(String s: commMap.get(x))
 				{
-					SS.setTrickler(map.get(s));
-					SS.trickleSimul();
-					analysisArray.add(SS.getTotalEverInfected());
-					analysisArray.add(SS.numRecovered());
-					SS.reset(false);
+					current=map.get(s);
+						SS.setTrickler(current);
+						SS.trickleSimul();
+						analysisArray.add(SS.getTotalEverInfected());
+						//					analysisArray.add(SS.numRecovered());
+						SS.reset(false);
 				}
 				SS.reset(true);
 			}
@@ -671,11 +677,12 @@ public class Main {
 			{
 				for(String s: commMap.get(x))
 				{
-					SS.setInfected(map.get(s));
-					SS.simul();
-					analysisArray.add(SS.getTotalEverInfected());
-					analysisArray.add(SS.numRecovered());
-					SS.reset(false);
+					current=map.get(s);
+						SS.setInfected(map.get(s));
+						SS.simul();
+						analysisArray.add(SS.getTotalEverInfected());
+						//			analysisArrayRecovered.add(SS.numRecovered());
+						SS.reset(false);
 				}
 				SS.reset(true);
 			}
@@ -684,10 +691,13 @@ public class Main {
 		double mean = getMean(analysisArray);
 		double stdError = getstdError(analysisArray);
 		double stdDev = getstdDev(analysisArray);
+		/*
 		double meanR = getMean(analysisArrayRecovered);
 		double stdErrorR = getstdError(analysisArrayRecovered);
 		double stdDevR = getstdDev(analysisArrayRecovered);
 		System.out.println(mean + "\t" + stdDev+"\t"+stdError+"\t --- \t"+meanR+"\t"+stdDevR+"\t"+stdErrorR);
+		 */
+		System.out.println(mean + "\t" + stdDev+"\t"+stdError);
 	}
 
 	// this function is used to generate a graph object for a particular day. 
@@ -719,20 +729,20 @@ public class Main {
 		}
 		SS.reset(affectVaccinated);
 	}
-	
+
 	//Used to take day-by-day averages of stochastic outbreak trials.
 	public static void runStaticSimulationTrials(StaticSimulation SS, Vertice initInfectious, int numTrials,int numDays, int outbreakThreshold, int outbreakTrialThreshold, PrintWriter pw)
 	{
 		ArrayList<Double> analysisArray = new ArrayList<>();
 		int recovered=0;
 		int count=0;
-		
+
 		ArrayList<ArrayList<double[]>> data = new ArrayList<>();
 		ArrayList<ArrayList<Double>> suscData = new ArrayList<>();
 		ArrayList<ArrayList<Double>> exposedData = new ArrayList<>();
 		ArrayList<ArrayList<Double>> infectedData = new ArrayList<>();
 		ArrayList<ArrayList<Double>> recoveredData = new ArrayList<>();
-		
+
 		for(int i=0; i<numDays; i++)
 		{
 			suscData.add(new ArrayList<>());
@@ -762,6 +772,7 @@ public class Main {
 				analysisArray.add((double)SS.getNumResistant());
 				data.add(SS.getData());
 				SS.reset(true);
+				count=0;
 			}
 		}
 		double mean = getMean(analysisArray);
@@ -769,7 +780,7 @@ public class Main {
 		double stdDev = getstdDev(analysisArray);
 		System.out.println(initInfectious.getID()+"\t"+mean + "\t" + stdDev+"\t"+stdError);
 		pw.println(initInfectious.getID()+"\t"+mean + "\t" + stdDev+"\t"+stdError);
-		
+
 		for(int i=0; i<data.size(); i++)
 		{
 			for(int j=0; j<numDays; j++)
@@ -790,7 +801,7 @@ public class Main {
 			System.out.println();
 		}
 	}
-	
+
 	public static void runDynamicSimulation(DynamicSimulation DS, Vertice initInfectious, boolean monteCarlo, boolean affectVaccinated)
 	{
 		DS.setStartDay(initInfectious.getStartingPoint());
@@ -808,8 +819,8 @@ public class Main {
 		}
 		DS.reset(affectVaccinated);
 	}
-	
-	
+
+
 	//Used to take day-by-day averages of stochastic outbreak trials.
 	public static void runDynamicSimulationTrials(DynamicSimulation DS, Vertice initInfectious, int numTrials, int numDays, int outbreakThreshold, int outbreakTrialThreshold, PrintWriter pw)
 	{
@@ -817,7 +828,7 @@ public class Main {
 		int recovered=0;
 		int count=0;
 		int startingPoint = initInfectious.getStartingPoint();
-		
+
 		ArrayList<ArrayList<double[]>> data = new ArrayList<>();
 		ArrayList<ArrayList<Double>> suscData = new ArrayList<>();
 		ArrayList<ArrayList<Double>> exposedData = new ArrayList<>();
@@ -846,7 +857,7 @@ public class Main {
 					System.out.println(initInfectious.getID()+"\t"+DS.getNumResistant()+"\t No outbreak observed");
 					pw.println(initInfectious.getID()+"\t No outbreak observed");
 					DS.reset(true);
-				//	return;
+					//	return;
 				}
 			}
 			else 
@@ -862,7 +873,7 @@ public class Main {
 		double stdDev = getstdDev(analysisArray);
 		System.out.println(initInfectious.getID()+"\t"+mean + "\t" + stdDev+"\t"+stdError);
 		pw.println(initInfectious.getID()+"\t"+mean + "\t" + stdDev+"\t"+stdError);
-		
+
 		for(int i=0; i<data.size(); i++)
 		{
 			for(int j=0; j<numDays; j++)
@@ -883,9 +894,9 @@ public class Main {
 			System.out.println();
 		}
 	}
-	
-	
-	
+
+
+
 	// Specific to rendering the original data-set using CytoScape location data. For use with JavaFX.
 	public static HashMap<Vertice, Location> getLocations(Scanner sc, HashMap<String, Vertice> map)
 	{
@@ -990,7 +1001,9 @@ public class Main {
 			c_FullD.close();
 
 			StaticSimulation SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
-			runStaticSimulation(SS,vertices.get(0),false,false);
+			//runStaticSimulation(SS,vertices.get(0),true,true);
+			
+			runStaticSimulationTrials(SS,vertices.get(0), 100,200,(int)(vertices.size()*.1),30,pw );
 		}
 		else
 		{
@@ -1003,7 +1016,25 @@ public class Main {
 			Graph[] graphList = {mondayGraph,tuesdayGraph,wednesdayGraph,thursdayGraph,fridayGraph};
 
 			DynamicSimulation DS = new DynamicSimulation(graphList,vertices,transmissionProbability,latentPeriod,infectiousPeriod);
-			runDynamicSimulation(DS,vertices.get(0),false,false);
+
+
+		/*	
+			for(int i=1000; i>=200; i-=200)
+				for(int j=0; j<4; j++)
+				{
+					System.out.println(i+"\t"+j);
+					runReactionaryVaccDS(DS,Meta, dist, commMap,map, i, j, true);
+				}
+*/
+			for(int i=1000; i>=200; i-=200)
+			{
+				System.out.println(i+"\t"+3+"\t low global");
+			//	runReactionaryVaccDS(DS,Meta, dist, commMap,map, i, 3, false);
+				globalVaccDS(DS,map,3,1000,false);
+			}
+			
+		//	globalVaccDS(DS,map,0,1000,true);
+		//	runReactionaryVaccDS(DS,Meta,dist,commMap,map,800,0,true);
 		}
 		experiment.close();
 	}

@@ -66,13 +66,13 @@ public class GraphRender extends Application{
 
 	// Windows-based directory. Use forward slash for Linux. 
 	static final String inputDirectory = "C:\\Simulation Input\\";
-	static final boolean fullGraphMode=false;
+	static final boolean fullGraphMode=true;
 	static final int numDayGraphs=5;
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=.1;
-	static final int latentPeriod=1;
-	static final int infectiousPeriod=3;
+	static final double transmissionProbability=.9;
+	static final int latentPeriod=8;
+	static final int infectiousPeriod=5;
 	static final int contactsPerHour=3;
 	
 	static final int numCentralities=4;
@@ -162,7 +162,8 @@ public class GraphRender extends Application{
 			DS = new DynamicSimulation(graphList,vertices,transmissionProbability,latentPeriod,infectiousPeriod);
 		}
 
-		Main.runRingVacc(Meta, commMap,IDmap, dist, 0, 0, 0, true);
+	//	Main.runRingVacc(Meta, commMap,IDmap, dist, 19, 800, 0, true);
+//		Main.vaccGlobalPeaks(vertices, 0, 800, true);
 	}
 
 
@@ -246,7 +247,7 @@ public class GraphRender extends Application{
 		Color color;
 		for(Vertice v: vertices)
 		{
-			if(v.getRecoveryState())
+			if(v.getProbNotRecovered()<.2)
 			{
 				if(v.getState()!=Vertice.HealthState.vaccinated&&!v.getVaccinationState())
 				{
@@ -270,7 +271,7 @@ public class GraphRender extends Application{
 		Color color;
 		for(Vertice v: vertices)
 		{
-			if(v.getRecoveryState())
+			if(v.getProbNotRecovered()<.2)
 			{
 				if(v.getState()!=Vertice.HealthState.vaccinated&&!v.getVaccinationState())
 				{

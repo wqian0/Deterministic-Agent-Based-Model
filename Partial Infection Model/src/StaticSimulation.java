@@ -229,12 +229,18 @@ public class StaticSimulation {
 	{
 		for(Vertice v:list)
 		{
-			v.setCumulation(1.0);
+			v.setCumulation(1.0);		
+			v.getTracker()[latentPd-1].PNI=0;
+			v.setProbNotRecovered(1);
+			v.setVaccinationState(false);
 		}
 	}	
 	public void setTrickler(Vertice v)
 	{
-		v.setCumulation(1.0);
+		v.setCumulation(1.0);		
+		v.getTracker()[latentPd-1].PNI=0;
+		v.setProbNotRecovered(1);
+		v.setVaccinationState(false);
 	}
 
 	//pre-calculates tProb*contactProb for each directed pair of vertices
@@ -273,21 +279,18 @@ public class StaticSimulation {
 				tempMap = weightRanks.get(v);
 				for(Vertice x: tempMap.keySet())
 				{
-					if(!x.getRecoveryState())
+					//backflow correction
+					altCumulation=v.getCumulation();
+					for(int i=latentPd-1; i<v.getTracker().length; i++)
 					{
-						//backflow correction
-						altCumulation=v.getCumulation();
-						for(int i=latentPd-1; i<v.getTracker().length; i++)
-						{
-							altCumulation=1-(1-altCumulation)/v.getTracker()[i].getPNI(x);
-						}
-						
-						// precision error correction 
-						if(altCumulation<0)
-							altCumulation=0;
-						
-						x.compoundCumulation(1-Math.pow(1-altCumulation*tempMap.get(x),v.getContactsPerDay().get(0)),v);
+						altCumulation=1-(1-altCumulation)/v.getTracker()[i].getPNI(x);
 					}
+
+					// precision error correction 
+					if(altCumulation<0)
+						altCumulation=0;
+
+					x.compoundCumulation(1-Math.pow(1-altCumulation*tempMap.get(x),v.getContactsPerDay().get(0)),v);
 				}
 			}
 		}
@@ -328,15 +331,16 @@ public class StaticSimulation {
 	{
 		double result=0;
 		for(Vertice v: vertices)
+		{
 			result+=v.getCumulation();
+		}
 		return result;
 	}
 	public double expectedNumExposed() // needs to be checked before recoverycheck
 	{
 		double result=0;
 		for(Vertice v: vertices)
-			if(!v.getRecoveryState())
-				result+=(1-v.getCumulation())*exposedProduct(v);
+			result+=(1-v.getProbInfectedFromContacts())*exposedProduct(v)*v.getProbNotRecovered();
 		return result;
 	}
 	public double exposedProduct(Vertice v)
@@ -351,24 +355,20 @@ public class StaticSimulation {
 	{
 		double result=0;
 		for(Vertice v: vertices)
-		{
-			if(v.getRecoveryState())
-				result++;
-		}
+			if(!v.getVaccinationState())
+				result+=1-v.getProbNotRecovered();
 		return result;
 	}
 	public double numSusceptible()
 	{
 		double result=0;
 		for(Vertice v: vertices)
-		{
-			if(!v.getRecoveryState())
-				result+=(1-v.getCumulation())*(1-exposedProduct(v));
-		}
+			result+=(1-v.getProbInfectedFromContacts())*(1-exposedProduct(v))*v.getProbNotRecovered();
 		return result; 
 	}
+	
 	public double getTotalEverInfected()
 	{
-		return totalEverInfected/infectiousPd;
+		return totalEverInfected/(infectiousPd);
 	}
 }

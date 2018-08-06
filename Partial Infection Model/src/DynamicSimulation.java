@@ -93,6 +93,7 @@ public class DynamicSimulation {
 		currentTotal=0;
 		previousTotal=0;
 		totalEverInfected=0;
+		currentInfected=0;
 		cumulativeData = new ArrayList<>();
 	}
 	public void setInfected(ArrayList<Vertice> input)
@@ -242,12 +243,15 @@ public class DynamicSimulation {
 	{
 		for(Vertice v:list)
 		{
-			v.setCumulation(1.0);
+			v.setCumulation(1.0);		
+			v.getTracker()[latentPd-1].PNI=0;
 		}
 	}	
 	public void setTrickler(Vertice v)
 	{
-		v.setCumulation(1.0);
+		v.setCumulation(1.0);		
+		v.getTracker()[latentPd-1].PNI=0;
+		v.setProbNotRecovered(1);
 	}
 
 	//pre-calculates tProb*contactProb for each directed pair of vertices
@@ -293,28 +297,25 @@ public class DynamicSimulation {
 				tempMap = weightRanks.get(weekday).get(v);
 				for(Vertice x: tempMap.keySet())
 				{
-					if(!x.getRecoveryState())
+					//backflow correction
+					altCumulation=v.getCumulation();
+					for(int i=latentPd-1; i<v.getTracker().length; i++)
 					{
-						//backflow correction
-						altCumulation=v.getCumulation();
-						for(int i=latentPd-1; i<v.getTracker().length; i++)
-						{
-							altCumulation=1-(1-altCumulation)/v.getTracker()[i].getPNI(x);
-						}
-
-						// precision error correction 
-						if(altCumulation<0)
-							altCumulation=0;
-						
-						x.compoundCumulation(1-Math.pow(1-altCumulation*tempMap.get(x),v.getContactsPerDay().get(weekday)),v);
+						altCumulation=1-(1-altCumulation)/v.getTracker()[i].getPNI(x);
 					}
+
+					// precision error correction 
+					if(altCumulation<0)
+						altCumulation=0;
+
+					x.compoundCumulation((1-Math.pow(1-altCumulation*tempMap.get(x),v.getContactsPerDay().get(weekday))),v);
 				}
 			}
 		}
-		showTrickle();
+	//	showTrickle();
 
 		//collection of daily data
-		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
+//		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 
 		for(Vertice v: vertices)
 		{
@@ -349,15 +350,16 @@ public class DynamicSimulation {
 	{
 		double result=0;
 		for(Vertice v: vertices)
+		{
 			result+=v.getCumulation();
+		}
 		return result;
 	}
 	public double expectedNumExposed() // needs to be checked before recoverycheck
 	{
 		double result=0;
 		for(Vertice v: vertices)
-			if(!v.getRecoveryState())
-				result+=(1-v.getCumulation())*exposedProduct(v);
+			result+=v.getProbNotRecovered()*(1-v.getProbInfectedFromContacts())*exposedProduct(v);
 		return result;
 	}
 	public double exposedProduct(Vertice v)
@@ -372,23 +374,25 @@ public class DynamicSimulation {
 	{
 		double result=0;
 		for(Vertice v: vertices)
-		{
-			if(v.getRecoveryState())
-				result++;
-		}
+			if(!v.getVaccinationState())
+				result+=1-v.getProbNotRecovered();
 		return result;
 	}
 	public double numSusceptible()
 	{
 		double result=0;
 		for(Vertice v: vertices)
-		{
-			if(!v.getRecoveryState())
-				result+=(1-v.getCumulation())*(1-exposedProduct(v));
-		}
+			result+=v.getProbNotRecovered()*(1-v.getProbInfectedFromContacts())*(1-exposedProduct(v));
 		return result; 
 	}
-	
+	public double numVaccinated()
+	{
+		double result=0;
+		for(Vertice v: vertices)
+			if(v.getVaccinationState())
+				result++;
+		return result;
+	}
 	public double getTotalEverInfected()
 	{
 		return totalEverInfected/(infectiousPd);
