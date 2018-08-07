@@ -266,6 +266,10 @@ public class Vertice{
 	{
 		return probInfectedFromContacts;
 	}
+	public void setProbInfectedFromContacts(double d)
+	{
+		probInfectedFromContacts=d;
+	}
 	//shifts queue for tracking contributors and calculates cumulatedProbability
 	public void addNewProbability()
 	{

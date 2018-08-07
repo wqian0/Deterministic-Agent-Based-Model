@@ -29,9 +29,9 @@ public class Main {
 	static final String inputDirectory = "C:\\Simulation Input\\";
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=.1;
-	static final int latentPeriod=1;
-	static final int infectiousPeriod=3;
+	static final double transmissionProbability=.9;
+	static final int latentPeriod=8;
+	static final int infectiousPeriod=5;
 	static final int contactsPerHour=3;
 
 	//Used for vaccination distribution analysis
@@ -856,7 +856,7 @@ public class Main {
 				DS.reset(true);
 				if(count>outbreakTrialThreshold)
 				{
-					System.out.println(initInfectious.getID()+"\t"recovered+"\t No outbreak observed");
+					System.out.println(initInfectious.getID()+"\t"+recovered+"\t No outbreak observed");
 					pw.println(initInfectious.getID()+"\t No outbreak observed");
 					//	return;
 				}
@@ -1002,7 +1002,9 @@ public class Main {
 			c_FullD.close();
 
 			StaticSimulation SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
-			//runStaticSimulation(SS,vertices.get(0),true,true);
+			double time = System.currentTimeMillis();
+		//	runStaticSimulation(SS,vertices.get(0),false,true);
+			System.out.println(System.currentTimeMillis()-time);
 			
 			runStaticSimulationTrials(SS,vertices.get(0), 100,200,(int)(vertices.size()*.25),30,pw );
 		}
