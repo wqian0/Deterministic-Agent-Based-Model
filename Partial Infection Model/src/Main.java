@@ -29,7 +29,7 @@ public class Main {
 	static final String inputDirectory = "C:\\Simulation Input\\";
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=.9;
+	static final double transmissionProbability=.3;
 	static final int latentPeriod=8;
 	static final int infectiousPeriod=5;
 	static final int contactsPerHour=3;
@@ -715,6 +715,28 @@ public class Main {
 		return result;
 	}
 
+	//Prints average centralities of each community to console.
+	public static void getCommunityProperties(HashMap<Integer, ArrayList<String>> commMap,HashMap<String, Vertice> map)
+	{
+		double[] centralityAvgs = new double[numCentralities];
+		for(Integer x: commMap.keySet())
+		{
+			for(String s: commMap.get(x))
+			{
+				for(int i=0; i<centralityAvgs.length; i++)
+				{
+					centralityAvgs[i]+=map.get(s).centralities.get(i);
+				}
+			}
+			System.out.print(x+"\t");
+			for(int i=0; i<centralityAvgs.length; i++)
+			{
+				System.out.print(centralityAvgs[i]/commMap.get(x).size()+"\t");
+			}
+			System.out.println();
+			centralityAvgs = new double[numCentralities];
+		}
+	}
 	public static void runStaticSimulation(StaticSimulation SS, Vertice initInfectious, boolean monteCarlo, boolean affectVaccinated)
 	{
 		if(monteCarlo)
@@ -801,7 +823,7 @@ public class Main {
 			System.out.print(getMean(suscData.get(i))+"\t"+getMean(exposedData.get(i))+"\t"+getMean(infectedData.get(i))+"\t"+getMean(recoveredData.get(i)));
 			System.out.print("\t"+getstdDev(suscData.get(i))+"\t"+getstdDev(exposedData.get(i))+"\t"+getstdDev(infectedData.get(i))+"\t"+getstdDev(recoveredData.get(i)));
 			System.out.println();
-		}/*
+		}
 		for(int i=0; i<data.size(); i++)
 		{
 			for(int j=0; j<data.get(i).size(); j++)
@@ -810,7 +832,7 @@ public class Main {
 			}
 			System.out.println();
 		}
-		*/
+		
 	}
 	
 	//averages data points for SEIR over all seed vertices for each community
@@ -824,6 +846,8 @@ public class Main {
 			ArrayList<ArrayList<Double>> exposedData = new ArrayList<>();
 			ArrayList<ArrayList<Double>> infectedData = new ArrayList<>();
 			ArrayList<ArrayList<Double>> recoveredData = new ArrayList<>();
+			ArrayList<Double> peakData = new ArrayList<>();
+			ArrayList<Double> peakDayData = new ArrayList<>();
 
 			for(int i=0; i<numDays; i++)
 			{
@@ -837,9 +861,11 @@ public class Main {
 				SS.setTrickler(map.get(s));
 				SS.trickleSimul();
 				data.add(SS.getData());
+				peakData.add(SS.getPeakInfected());
+				peakDayData.add((double)SS.getPeakDayInfected());
 				SS.reset(true);
 			}
-
+			/*
 			for(int i=0; i<data.size(); i++)
 			{
 				for(int j=0; j<numDays; j++)
@@ -853,6 +879,7 @@ public class Main {
 					}
 				}
 			}
+			
 			for(int i=0; i<numDays; i++)
 			{
 				System.out.print(x+"\t"+commMap.get(x).size()+"\t"+getMean(suscData.get(i))+"\t"+getMean(exposedData.get(i))+"\t"+getMean(infectedData.get(i))+"\t"+getMean(recoveredData.get(i)));
@@ -862,6 +889,8 @@ public class Main {
 				pw.print("\t"+getstdDev(suscData.get(i))+"\t"+getstdDev(exposedData.get(i))+"\t"+getstdDev(infectedData.get(i))+"\t"+getstdDev(recoveredData.get(i)));
 				pw.println();
 			}
+			*/
+			System.out.println(x+"\t"+getMean(peakData)+"\t"+getMean(peakDayData)+"\t"+getstdDev(peakData)+"\t"+getstdDev(peakDayData));
 		}
 		/*
 		for(int i=0; i<data.size(); i++)
@@ -1077,8 +1106,9 @@ public class Main {
 		//	runStaticSimulation(SS,vertices.get(0),false,true);
 			System.out.println(System.currentTimeMillis()-time);
 			
-		//	runStaticSimulationTrials(SS,vertices.get(0), 10,350,(int)(vertices.size()*.25),30,pw );
-			runSSDeterministicTrials(SS, map, commMap, 150,pw);
+			runStaticSimulationTrials(SS,vertices.get(0), 30,350,(int)(vertices.size()*.25),30,pw );
+		//	runSSDeterministicTrials(SS, map, commMap, 150,pw);
+		//	getCommunityProperties(commMap,map);
 		}
 		else
 		{

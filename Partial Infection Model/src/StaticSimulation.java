@@ -201,8 +201,6 @@ public class StaticSimulation {
 	//A single timestep (day) in the classic stochastic version of agent-based SEIR.
 	public void runDay() {
 		
-		//collection of daily data
-		cumulativeData.add(new double[] {getNumSusceptible(), getNumExposed(), getNumInfected(), getNumResistant()});
 		Vertice current;
 		Vertice other;
 		temp = new ArrayList<>(vertices);
@@ -220,20 +218,19 @@ public class StaticSimulation {
 					temp.remove(other);
 			}
 		}
-		
+		day++;
 		for (Vertice v : vertices) {
 			v.checkRecovery();
 		}
-		day++;
 	}
 	
 	public void simul()
 	{
 	//	System.out.println("day \t S \t E \t I \t R");
-	//		show();
 		while(hasRemaining())
-		{
+		{	
 	//		show();
+			cumulativeData.add(new double[] {getNumSusceptible(), getNumExposed(), getNumInfected(), getNumResistant()});
 			runDay();
 			if(cumulativeData.get(day-1)[2]>peakInfected)
 			{
@@ -241,10 +238,10 @@ public class StaticSimulation {
 				peakDayInfected=day-1;
 			}
 		}
-	//	show();
+//		show();
+		cumulativeData.add(new double[] {getNumSusceptible(), getNumExposed(), getNumInfected(), getNumResistant()});
 	}
 
-	
 	//	Functions for the deterministic version below:
 
 
@@ -295,6 +292,7 @@ public class StaticSimulation {
 		HashMap<Vertice, Double> tempMap;
 		double altProduct=0;
 		double backflowProduct=1;
+
 		for(Vertice v:vertices)
 		{
 			if(v.getCumulation()>0)
@@ -322,25 +320,21 @@ public class StaticSimulation {
 				}
 			}
 		}
-	//	showTrickle();
-
-		//collection of daily data
-		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
-		
+		day++;
 		for(Vertice v: vertices)
 		{
 			v.checkCumulationRecovery(); 
 		}
-		day++;
 	}
 	public void trickleSimul()
 	{
-		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 		currentInfected = expectedNumInfected();
 		currentTotal=currentInfected;
 		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
 		{
 			previousTotal=currentTotal;
+			showTrickle();
+			cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 			runTrickleDay();
 			currentInfected=expectedNumInfected();
 			if(currentInfected>peakInfected)
@@ -351,6 +345,8 @@ public class StaticSimulation {
 			currentTotal=currentInfected+expectedNumExposed();
 			totalEverInfected+=currentInfected;
 		}
+		showTrickle();
+		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 	}
 	public void showTrickle()
 	{

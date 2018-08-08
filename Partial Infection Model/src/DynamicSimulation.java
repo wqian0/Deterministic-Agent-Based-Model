@@ -213,13 +213,7 @@ public class DynamicSimulation {
 
 	//A single timestep (day) in the classic stochastic version of agent-based SEIR with rotation between graphs.
 	public void runDay() {
-		
-		//collection of daily data
-		cumulativeData.add(new double[] {getNumSusceptible(), getNumExposed(), getNumInfected(), getNumResistant()});
-		
-		for (Vertice v : vertices) {
-			v.checkRecovery();
-		}
+	
 		Vertice current;
 		Vertice other;
 		temp = new ArrayList<>(graphList[weekday].getVertices());
@@ -239,6 +233,9 @@ public class DynamicSimulation {
 		}
 		day++;
 		weekday = (startingWkDay + day) % 5;
+		for (Vertice v : vertices) {
+			v.checkRecovery();
+		}
 	}
 	public void simul()
 	{
@@ -246,6 +243,7 @@ public class DynamicSimulation {
 		while(hasRemaining())
 		{
 	//		show();
+			cumulativeData.add(new double[] {getNumSusceptible(), getNumExposed(), getNumInfected(), getNumResistant()});
 			runDay();
 			if(cumulativeData.get(day-1)[2]>peakInfected)
 			{
@@ -254,6 +252,7 @@ public class DynamicSimulation {
 			}
 		}
 	//	show();
+		cumulativeData.add(new double[] {getNumSusceptible(), getNumExposed(), getNumInfected(), getNumResistant()});
 	}
 
 	//	Functions for the deterministic version below:
@@ -338,26 +337,22 @@ public class DynamicSimulation {
 				}
 			}
 		}
-		showTrickle();
-
-		//collection of daily data
-//		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
-
+		day++;
+		weekday=(startingWkDay+day)%5;
 		for(Vertice v: vertices)
 		{
 			v.checkCumulationRecovery(); 
 		}
-		day++;
-		weekday=(startingWkDay+day)%5;
 	}
 	public void trickleSimul()
 	{
-		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 		currentInfected = expectedNumInfected();
 		currentTotal=currentInfected;
 		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
 		{
 			previousTotal=currentTotal;
+			showTrickle();
+			cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 			runTrickleDay();
 			currentInfected=expectedNumInfected();
 			if(currentInfected>peakInfected)
@@ -368,6 +363,8 @@ public class DynamicSimulation {
 			currentTotal=currentInfected+expectedNumExposed();
 			totalEverInfected+=currentInfected;
 		}
+		showTrickle();
+		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 	}
 	public void showTrickle()
 	{

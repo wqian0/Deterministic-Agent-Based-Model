@@ -41,8 +41,8 @@ public class Vertice{
 		edges = new ArrayList<>();
 		for(int i=0; i<numWeekdays; i++)
 			edges.add(new ArrayList<Edge>());
-		daysSinceInfection=-1;
-		daysSinceExposed=-1;
+		daysSinceInfection=0;
+		daysSinceExposed=0;
 		
 		centralities = new ArrayList<>();
 		
@@ -198,7 +198,7 @@ public class Vertice{
 			if(daysSinceInfection==infectiousPd)
 			{
 				state=HealthState.resistant;
-				daysSinceInfection=-1;
+				daysSinceInfection=0;
 			}
 		}
 		else if(state==HealthState.exposed)
@@ -208,7 +208,7 @@ public class Vertice{
 			{
 				state=HealthState.infected;
 				daysSinceInfection=0;
-				daysSinceExposed=-1;
+				daysSinceExposed=0;
 			}
 		}
 		resetRemainingContacts();
