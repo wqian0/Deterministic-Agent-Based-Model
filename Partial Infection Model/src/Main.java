@@ -772,6 +772,7 @@ public class Main {
 			{
 				analysisArray.add((double)recovered);
 				data.add(SS.getData());
+	//			System.out.println(SS.getPeakInfected()+"\t"+SS.getPeakDayInfected()+"\t"+i);
 				SS.reset(true);
 				count=0;
 			}
@@ -800,9 +801,79 @@ public class Main {
 			System.out.print(getMean(suscData.get(i))+"\t"+getMean(exposedData.get(i))+"\t"+getMean(infectedData.get(i))+"\t"+getMean(recoveredData.get(i)));
 			System.out.print("\t"+getstdDev(suscData.get(i))+"\t"+getstdDev(exposedData.get(i))+"\t"+getstdDev(infectedData.get(i))+"\t"+getstdDev(recoveredData.get(i)));
 			System.out.println();
+		}/*
+		for(int i=0; i<data.size(); i++)
+		{
+			for(int j=0; j<data.get(i).size(); j++)
+			{
+				System.out.print(data.get(i).get(j)[2]+"\t");
+			}
+			System.out.println();
 		}
+		*/
 	}
+	
+	//averages data points for SEIR over all seed vertices for each community
+	public static void runSSDeterministicTrials(StaticSimulation SS, HashMap<String, Vertice> map, HashMap<Integer, ArrayList<String>> commMap, int numDays, PrintWriter pw)
+	{
 
+		for(Integer x: commMap.keySet())
+		{
+			ArrayList<ArrayList<double[]>> data = new ArrayList<>();
+			ArrayList<ArrayList<Double>> suscData = new ArrayList<>();
+			ArrayList<ArrayList<Double>> exposedData = new ArrayList<>();
+			ArrayList<ArrayList<Double>> infectedData = new ArrayList<>();
+			ArrayList<ArrayList<Double>> recoveredData = new ArrayList<>();
+
+			for(int i=0; i<numDays; i++)
+			{
+				suscData.add(new ArrayList<>());
+				exposedData.add(new ArrayList<>());
+				infectedData.add(new ArrayList<>());
+				recoveredData.add(new ArrayList<>());
+			}
+			for(String s: commMap.get(x))
+			{
+				SS.setTrickler(map.get(s));
+				SS.trickleSimul();
+				data.add(SS.getData());
+				SS.reset(true);
+			}
+
+			for(int i=0; i<data.size(); i++)
+			{
+				for(int j=0; j<numDays; j++)
+				{
+					if(data.get(i).size()>j)
+					{
+						suscData.get(j).add(data.get(i).get(j)[0]);
+						exposedData.get(j).add(data.get(i).get(j)[1]);
+						infectedData.get(j).add(data.get(i).get(j)[2]);
+						recoveredData.get(j).add(data.get(i).get(j)[3]);
+					}
+				}
+			}
+			for(int i=0; i<numDays; i++)
+			{
+				System.out.print(x+"\t"+commMap.get(x).size()+"\t"+getMean(suscData.get(i))+"\t"+getMean(exposedData.get(i))+"\t"+getMean(infectedData.get(i))+"\t"+getMean(recoveredData.get(i)));
+				System.out.print("\t"+getstdDev(suscData.get(i))+"\t"+getstdDev(exposedData.get(i))+"\t"+getstdDev(infectedData.get(i))+"\t"+getstdDev(recoveredData.get(i)));
+				System.out.println();
+				pw.print(x+"\t"+getMean(suscData.get(i))+"\t"+getMean(exposedData.get(i))+"\t"+getMean(infectedData.get(i))+"\t"+getMean(recoveredData.get(i)));
+				pw.print("\t"+getstdDev(suscData.get(i))+"\t"+getstdDev(exposedData.get(i))+"\t"+getstdDev(infectedData.get(i))+"\t"+getstdDev(recoveredData.get(i)));
+				pw.println();
+			}
+		}
+		/*
+		for(int i=0; i<data.size(); i++)
+		{
+			for(int j=0; j<data.get(i).size(); j++)
+			{
+				System.out.print(data.get(i).get(j)[2]+"\t");
+			}
+			System.out.println();
+		}
+		 */
+	}
 	public static void runDynamicSimulation(DynamicSimulation DS, Vertice initInfectious, boolean monteCarlo, boolean affectVaccinated)
 	{
 		DS.setStartDay(initInfectious.getStartingPoint());
@@ -1006,7 +1077,8 @@ public class Main {
 		//	runStaticSimulation(SS,vertices.get(0),false,true);
 			System.out.println(System.currentTimeMillis()-time);
 			
-			runStaticSimulationTrials(SS,vertices.get(0), 100,200,(int)(vertices.size()*.25),30,pw );
+		//	runStaticSimulationTrials(SS,vertices.get(0), 10,350,(int)(vertices.size()*.25),30,pw );
+			runSSDeterministicTrials(SS, map, commMap, 150,pw);
 		}
 		else
 		{
@@ -1019,6 +1091,7 @@ public class Main {
 			Graph[] graphList = {mondayGraph,tuesdayGraph,wednesdayGraph,thursdayGraph,fridayGraph};
 
 			DynamicSimulation DS = new DynamicSimulation(graphList,vertices,transmissionProbability,latentPeriod,infectiousPeriod);
+			runDynamicSimulation(DS,vertices.get(0),false,true);
 		}
 		experiment.close();
 	}

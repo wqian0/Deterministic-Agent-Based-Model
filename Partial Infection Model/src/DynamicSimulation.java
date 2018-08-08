@@ -318,7 +318,9 @@ public class DynamicSimulation {
 				tempMap = weightRanks.get(weekday).get(v);
 				for(Vertice x: tempMap.keySet())
 				{
+					altProduct=v.getCumulation();
 					//comment out this bracket to skip backflow correction. Barely changes outbreak and around 5 times faster
+				/*
 					{	
 						for(int i=latentPd-1; i<v.getTracker().length; i++)
 							backflowProduct*=v.getTracker()[i].getPNI(x);
@@ -331,12 +333,12 @@ public class DynamicSimulation {
 						
 						altProduct*=v.getProbNotRecovered();
 					}
-
+				 */
 					x.compoundCumulation((1-Math.pow(1-altProduct*tempMap.get(x),v.getContactsPerDay().get(weekday))),v);
 				}
 			}
 		}
-	//	showTrickle();
+		showTrickle();
 
 		//collection of daily data
 //		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});

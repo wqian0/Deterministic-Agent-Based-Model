@@ -304,26 +304,28 @@ public class StaticSimulation {
 				{	
 					altProduct=v.getCumulation();
 					//comment out this bracket to skip backflow correction. Barely changes outbreak and around 5 times faster
+			/*		
 				{	
+					altProduct=v.getProbInfectedFromContacts();
 					for(int i=latentPd-1; i<v.getTracker().length; i++)
-						backflowProduct*=v.getTracker()[i].getPNI(x);
-					
-					altProduct=backflowProduct+v.getProbInfectedFromContacts()-1;
-					backflowProduct=1;
+					{
+						altProduct=1-(1-altProduct)/v.getTracker()[i].getPNI(x);
+					}
 					
 					if(altProduct<0)
 						altProduct=0;
-					
+				
 					altProduct*=v.getProbNotRecovered();
 				}
+				*/
 					x.compoundCumulation(1-Math.pow(1-altProduct*tempMap.get(x),v.getContactsPerDay().get(0)),v);
 				}
 			}
 		}
-		showTrickle();
+	//	showTrickle();
 
 		//collection of daily data
-		//cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
+		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 		
 		for(Vertice v: vertices)
 		{
