@@ -26,6 +26,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 //import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Border;
@@ -57,12 +59,13 @@ public class GraphRender extends Application{
 	int weekday=0;
 	static final int canvasSize = 1500;
 	static final double radius=3; 
-	static final double scaleFactor=7.0;
+	static final double scaleFactor=6.25;
 	Group root;
 	HashMap<String, Vertice> IDmap;
 	HashMap<Vertice, Location> map;
 	ArrayList<Vertice> vertices;
 	ArrayList<Edge> edges;
+	HashMap<Integer, ArrayList<String>> commMap;
 
 	// Windows-based directory. Use forward slash for Linux. 
 	static final String inputDirectory = "C:\\Simulation Input\\";
@@ -70,8 +73,8 @@ public class GraphRender extends Application{
 	static final int numDayGraphs=5;
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=.9;
-	static final int latentPeriod=8;
+	static final double transmissionProbability=.1;
+	static final int latentPeriod=2;
 	static final int infectiousPeriod=5;
 	static final int contactsPerHour=3;
 	
@@ -102,7 +105,7 @@ public class GraphRender extends Application{
 		IDs.close();
 		vertices = new ArrayList<>(IDmap.values());
 		Scanner c_FullD = new Scanner(new File(inputDirectory+"Full Graph Duration Communities.txt"));
-		HashMap<Integer, ArrayList<String>> commMap = CommunityAnalysis.getCommunities(c_FullD);
+		commMap = CommunityAnalysis.getCommunities(c_FullD);
 		c_FullD.close();
 
 		Scanner nodeProperties = new Scanner(new File(inputDirectory+"Node Properties.txt"));
@@ -161,9 +164,11 @@ public class GraphRender extends Application{
 
 			DS = new DynamicSimulation(graphList,vertices,transmissionProbability,latentPeriod,infectiousPeriod);
 		}
-
-	//	Main.runRingVacc(Meta, commMap,IDmap, dist, 19, 800, 0, true);
-//		Main.vaccGlobalPeaks(vertices, 0, 800, true);
+	//	Main.vaccVerticeNeighbors(vertices.get(0), 0);
+	 //   Main.runRingVacc(Meta, commMap,IDmap, dist, 0, 500, 0, true);
+	//	Main.vaccGlobalPeaks(vertices, 0, 600, true);
+	//	Main.vaccCommunity(commMap, IDmap, 1);
+	//	Main.vaccBridges(vertices, 75, 40, 0, 2);
 	}
 
 
@@ -173,6 +178,7 @@ public class GraphRender extends Application{
 		primaryStage.setTitle("Agent-Based Disease Model");
 		root = new Group();
 		Canvas canvas = new Canvas(canvasSize, canvasSize);
+		canvas.setFocusTraversable(true);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		setSim();
 		setLocationMap();
@@ -181,17 +187,40 @@ public class GraphRender extends Application{
 		root.getChildren().add(canvas);
 		if(fullGraphMode)
 		{
-			SS.setTrickler(vertices.get(0));
+			SS.setTrickler(vertices.get(2000));
 			drawShapesSS(gc);
 			canvas.addEventHandler(MouseEvent.MOUSE_CLICKED,
 					new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent t) {
-					SS.runTrickleDay();
-					gc.clearRect(0, 0, canvasSize, canvasSize);
-					drawLines(gc);
-					drawShapesSS(gc);	
-					primaryStage.setTitle("Agent-Based Disease Model "+"Day "+SS.getDay());
+					Vertice v = matchClickToVertex(t.getSceneX(),t.getSceneY());
+					if(v!=null)
+					{
+						System.out.println(v.getID()+"\t"+matchCommID(v)+"\t"+"\t"+v.centralities.get(0)+"\t"+v.centralities.get(1)+"\t"+v.centralities.get(2)+"\t"+v.centralities.get(3));
+						v.setVaccinationState(true);
+						v.setProbNotRecovered(0);
+						gc.clearRect(0, 0, canvasSize, canvasSize);
+						drawLines(gc);
+						drawShapesSS(gc);
+
+					}
+					else
+						System.out.println("nothing");
+					
+				}
+			});
+			canvas.addEventHandler(KeyEvent.ANY,
+					new EventHandler<KeyEvent>() {
+				@Override
+				public void handle(KeyEvent event) {
+					if(event.getCode().equals(KeyCode.SPACE))
+					{
+						SS.runTrickleDay();
+						gc.clearRect(0, 0, canvasSize, canvasSize);
+						drawLines(gc);
+						drawShapesSS(gc);	
+						primaryStage.setTitle("Agent-Based Disease Model "+"Day "+SS.getDay());
+					}
 				}
 			});
 		}
@@ -212,6 +241,21 @@ public class GraphRender extends Application{
 					primaryStage.setTitle("Agent-Based Disease Model "+"Day "+DS.getDay());
 				}
 			});
+			canvas.addEventHandler(KeyEvent.KEY_PRESSED,
+					new EventHandler<KeyEvent>() {
+				@Override
+				public void handle(KeyEvent event) {
+					if(event.getCode()==KeyCode.SPACE)
+					{
+						weekday=DS.getWeekday();
+						DS.runTrickleDay();
+						gc.clearRect(0, 0, canvasSize, canvasSize);
+						drawLines(gc);
+						drawShapesDS(gc);	
+						primaryStage.setTitle("Agent-Based Disease Model "+"Day "+DS.getDay());
+					}
+				}
+			});
 		}
 	
 		primaryStage.setScene(new Scene(root));
@@ -227,6 +271,7 @@ public class GraphRender extends Application{
 		{
 			for(Edge e: edges)
 			{
+				if(!e.getSource().getVaccinationState()&&!e.getTarget().getVaccinationState())
 				gc.strokeLine(map.get(e.getSource()).x, map.get(e.getSource()).y, map.get(e.getTarget()).x, map.get(e.getTarget()).y);
 			}
 		}
@@ -271,7 +316,7 @@ public class GraphRender extends Application{
 		Color color;
 		for(Vertice v: vertices)
 		{
-			if(v.getProbNotRecovered()<.2)
+			if(v.getProbNotRecovered()<.1)
 			{
 				if(v.getState()!=Vertice.HealthState.vaccinated&&!v.getVaccinationState())
 				{
@@ -290,7 +335,33 @@ public class GraphRender extends Application{
 			}
 		}
 	}
-
+	private Vertice matchClickToVertex(double x, double y)
+	{
+		double currentX;
+		double currentY;
+		for(Vertice v: map.keySet())
+		{
+			currentX=map.get(v).x;
+			currentY=map.get(v).y;
+			if(currentX-radius<=x&&x<=currentX+radius&&currentY-radius<=y&&y<=currentY+radius)
+			{
+				return v;
+			}
+		}
+		return null;
+	}
+	private Integer matchCommID(Vertice v)
+	{
+		for(Integer x: commMap.keySet())
+		{
+			for(String s:commMap.get(x))
+			{
+				if(s.equals(v.getID()))
+					return x;
+			}
+		}
+		return -2;
+	}
 
 }
 

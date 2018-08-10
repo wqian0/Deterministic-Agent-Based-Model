@@ -10,8 +10,9 @@ public class Vertice{
 	private int daysSinceExposed;
 	private int daysSinceInfection;
 	
+	private int commID;
+	
 	public double searchPlaceholder;
-	public int day;
 
 	private double cumulatedProbability;
 	
@@ -45,6 +46,7 @@ public class Vertice{
 		daysSinceExposed=0;
 		
 		centralities = new ArrayList<>();
+		commID=-100;
 		
 		vaccinated=false;
 		
@@ -101,6 +103,14 @@ public class Vertice{
 		trackers = new PNITracker[infectiousPd+latentPd-1];
 		for(int i=0; i<trackers.length; i++)
 			trackers[i]=new PNITracker();
+	}
+	public void setCommID(int input)
+	{
+		commID=input;
+	}
+	public int getCommID()
+	{
+		return commID;
 	}
 	public int getStartingPoint()
 	{
