@@ -27,6 +27,7 @@ public class Vertice{
 	private PNITracker todayTracker; //The T[u] property
 	ArrayList<Double> centralities; 
 	
+	Double FC;
 	public enum HealthState
 	{
 		susceptible,

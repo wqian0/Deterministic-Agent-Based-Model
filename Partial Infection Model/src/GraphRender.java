@@ -59,7 +59,7 @@ public class GraphRender extends Application{
 	int weekday=0;
 	static final int canvasSize = 1500;
 	static final double radius=3; 
-	static final double scaleFactor=6.25;
+	static final double scaleFactor=6.5;
 	Group root;
 	HashMap<String, Vertice> IDmap;
 	HashMap<Vertice, Location> map;
@@ -143,6 +143,7 @@ public class GraphRender extends Application{
 
 		Main.setContactsByDuration(vertices,coursesPerDay,contactsPerHour, fullGraphMode);
 		Main.addCentralities(nodeProperties,IDmap,numCentralities);
+		Main.setCommIDs(IDmap,commMap);
 
 		if(fullGraphMode) 
 		{
@@ -150,7 +151,10 @@ public class GraphRender extends Application{
 			edges = Main.getEdges(e_Full, IDmap, 0);
 			Graph Full = new Graph(vertices,edges,0);
 			e_Full.close();
+		//	Main.globalCommCentralityCalculator(vertices,Meta);
+		//	Main.vaccFC(vertices, 100);
 			SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
+
 		}
 		else
 		{
@@ -164,11 +168,6 @@ public class GraphRender extends Application{
 
 			DS = new DynamicSimulation(graphList,vertices,transmissionProbability,latentPeriod,infectiousPeriod);
 		}
-	//	Main.vaccVerticeNeighbors(vertices.get(0), 0);
-	 //   Main.runRingVacc(Meta, commMap,IDmap, dist, 0, 500, 0, true);
-	//	Main.vaccGlobalPeaks(vertices, 0, 600, true);
-	//	Main.vaccCommunity(commMap, IDmap, 1);
-	//	Main.vaccBridges(vertices, 75, 40, 0, 2);
 	}
 
 

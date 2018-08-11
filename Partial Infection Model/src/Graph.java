@@ -30,6 +30,14 @@ public class Graph {
 		total/=numVertices;
 		return total;
 	}
+	public Vertice getVertex(String ID)
+	{
+		for(Vertice v: vertices)
+			if(v.getID().equals(ID))
+				return v;
+		System.out.println(ID);
+		return null;
+	}
 	public int getNumEdges()
 	{
 		return numEdges;

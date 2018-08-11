@@ -333,7 +333,7 @@ public class StaticSimulation {
 		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
 		{
 			previousTotal=currentTotal;
-	//		showTrickle();
+			showTrickle();
 			cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 			runTrickleDay();
 			currentInfected=expectedNumInfected();
@@ -345,7 +345,7 @@ public class StaticSimulation {
 			currentTotal=currentInfected+expectedNumExposed();
 			totalEverInfected+=currentInfected;
 		}
-//		showTrickle();
+		showTrickle();
 		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 	}
 	public void showTrickle()

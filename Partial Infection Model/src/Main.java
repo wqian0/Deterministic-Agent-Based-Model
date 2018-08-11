@@ -30,8 +30,8 @@ public class Main {
 	static final String inputDirectory = "C:\\Simulation Input\\";
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=.9;
-	static final int latentPeriod=8;
+	static final double transmissionProbability=.1;
+	static final int latentPeriod=2;
 	static final int infectiousPeriod=5;
 	static final int contactsPerHour=3;
 
@@ -42,7 +42,7 @@ public class Main {
 	static final int numDayGraphs=5;
 
 	//seeded random for use in stochastic model.  
-	static final SplittableRandom RNG = new SplittableRandom(1981);
+	static final SplittableRandom RNG = new SplittableRandom(741);
 
 	// read edges from an input file, assuming the vertices are in the hashmap
 	public static ArrayList<Edge> getEdges(Scanner sc, HashMap<String,Vertice> map, int day)
@@ -125,6 +125,25 @@ public class Main {
 				}
 			}
 		}
+	}
+	
+	public static void vaccFC(ArrayList<Vertice> vertices, int numOfVaccines)
+	{
+		ArrayList<Vertice> vCopy = new ArrayList<>(vertices);
+		Collections.sort(vCopy, new Comparator<Vertice>() {
+			@Override
+			public int compare(Vertice v1,Vertice v2) {
+				return v1.FC.compareTo(v2.FC);
+			}
+		});
+			for(int j=vCopy.size()-1; j>=vCopy.size()-numOfVaccines; j--)
+			{
+				if(vCopy.get(j).getCumulation()==0)
+				{
+					vCopy.get(j).setProbNotRecovered(0);
+					vCopy.get(j).setVaccinationState(true);
+				}
+			}
 	}
 	public static void globalVaccDS(DynamicSimulation DS, HashMap<String, Vertice> map,int traitID, int vaccines, boolean pickHigh)
 	{
@@ -632,7 +651,56 @@ public class Main {
 			vaccVerticeNeighbors(e.getOther(v),depth-1);
 		}
 	}
-	
+	public static void globalCommCentralityCalculator(ArrayList<Vertice> vertices, Graph communities)
+	{
+		HashMap<Vertice, HashMap<Integer, Double>> commConnectivity = new HashMap<>(); //maps vertices to a hashmap of comm ID to fraction of connectivity between communities 
+		Vertice other;
+		Integer otherComm;
+		double current=0;
+		for(Vertice v: vertices)
+		{
+			commConnectivity.put(v, new HashMap<>());
+			for(Edge e: v.getEdges(0))
+			{
+				other = e.getOther(v);
+				otherComm=other.getCommID();
+				if(otherComm!=v.getCommID())
+				{
+					if(commConnectivity.get(v).containsKey(otherComm))
+						current= commConnectivity.get(v).get(otherComm);
+					else
+						current=0;
+					commConnectivity.get(v).put(otherComm, current+e.getWeight());
+				}
+			}
+		}
+		for(Vertice v: vertices)
+		{
+			for(Integer comm: commConnectivity.get(v).keySet())
+			{
+				commConnectivity.get(v).put(comm, commConnectivity.get(v).get(comm)/getEdgeWeight(communities.getVertex(Integer.toString(comm)),communities.getVertex(Integer.toString(v.getCommID()))));
+			}
+		}
+		for(Vertice v: commConnectivity.keySet())
+		{
+			for(Integer comm: commConnectivity.get(v).keySet())
+			{
+				System.out.println(v.getID()+"\t"+v.getCommID()+"\t"+comm+"\t"+commConnectivity.get(v).get(comm));
+			}
+		}
+		System.out.println("=============================================");
+		current=0;
+		for(Vertice v: commConnectivity.keySet())
+		{
+			for(Integer comm: commConnectivity.get(v).keySet())
+			{
+				current+=commConnectivity.get(v).get(comm);
+			}
+			System.out.println(v.getID()+"\t"+v.getCommID()+"\t"+current);
+			v.FC=current;
+			current=0;
+		}
+	}
 	public static void vaccBridges(ArrayList<Vertice> vertices, int numVaccines,double aggressivenessFactor, int highTraitID, int lowTraitID) //looks for vertices of high something, low something. Ex: High betweenness and low degree
 	{
 		List<Vertice> lowTrait = new ArrayList<>(vertices);
@@ -655,8 +723,6 @@ public class Main {
 			highTrait.get(i).setVaccinationState(true);
 			highTrait.get(i).setProbNotRecovered(0);
 		}
-		
-		
 	}
 	// this function is used to run a single set of experiments using the reactionary vaccination strategy
 	/*
@@ -890,7 +956,7 @@ public class Main {
 			System.out.print("\t"+getstdDev(suscData.get(i))+"\t"+getstdDev(exposedData.get(i))+"\t"+getstdDev(infectedData.get(i))+"\t"+getstdDev(recoveredData.get(i)));
 			System.out.println();
 		}
-		/*
+		
 		for(int i=0; i<data.size(); i++)
 		{
 			for(int j=0; j<data.get(i).size(); j++)
@@ -899,7 +965,7 @@ public class Main {
 			}
 			System.out.println();
 		}
-		*/
+		
 		
 	}
 	
@@ -1181,14 +1247,7 @@ public class Main {
 			c_FullD.close();
 
 			StaticSimulation SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
-			
-		for(Vertice v: vertices)
-			runStaticSimulation(SS,v,false,true);
-			
-		//	runStaticSimulationTrials(SS,vertices.get(0), 100,350,(int)(vertices.size()*.33),30,pw );
-		//	runSSDeterministicTrials(SS, map, commMap, 150,pw);
-		//	getCommunityProperties(commMap,map);
-		//	System.out.println(vertices.get(0).getID());
+		//	globalCommCentralityCalculator(vertices,Meta);
 		}
 		else
 		{
