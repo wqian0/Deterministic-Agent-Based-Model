@@ -73,8 +73,8 @@ public class GraphRender extends Application{
 	static final int numDayGraphs=5;
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=.1;
-	static final int latentPeriod=2;
+	static final double transmissionProbability=.9;
+	static final int latentPeriod=8;
 	static final int infectiousPeriod=5;
 	static final int contactsPerHour=3;
 	
@@ -151,9 +151,11 @@ public class GraphRender extends Application{
 			edges = Main.getEdges(e_Full, IDmap, 0);
 			Graph Full = new Graph(vertices,edges,0);
 			e_Full.close();
-		//	Main.globalCommCentralityCalculator(vertices,Meta);
+			HashMap<Vertice, HashMap<Integer, Double>> input= Main.globalCommCentralityCalculator(vertices,Meta);
+			Main.vaccCommConnectors(input, commMap,vertices,500);
 		//	Main.vaccFC(vertices, 100);
 			SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
+			System.out.println(SS.numVaccinated());
 
 		}
 		else

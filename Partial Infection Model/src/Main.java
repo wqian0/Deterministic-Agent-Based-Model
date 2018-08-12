@@ -30,8 +30,8 @@ public class Main {
 	static final String inputDirectory = "C:\\Simulation Input\\";
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=.1;
-	static final int latentPeriod=2;
+	static final double transmissionProbability=.9;
+	static final int latentPeriod=8;
 	static final int infectiousPeriod=5;
 	static final int contactsPerHour=3;
 
@@ -281,10 +281,6 @@ public class Main {
 				dist[i][j]=Double.POSITIVE_INFINITY;
 			}
 		}
-		for(int i=0; i<dist.length; i++)
-		{
-			dist[i][i]=0;
-		}
 		for(int i=0; i<communities.getVertices().size(); i++)
 		{
 			for(int j=0; j<communities.getVertices().size(); j++)
@@ -292,7 +288,10 @@ public class Main {
 				dist[i][j]= 1/getEdgeWeight(communities.getVertices().get(i),communities.getVertices().get(j));
 			}
 		}
-
+		for(int i=0; i<dist.length; i++)
+		{
+			dist[i][i]=0;
+		}
 		for(int k=0; k<IDs.size(); k++)
 		{
 
@@ -316,7 +315,10 @@ public class Main {
 				results.println();
 			}
 		}
-
+		for(int i=0; i<dist.length; i++)
+		{
+			dist[i][i]=Double.POSITIVE_INFINITY;
+		}
 		return dist;
 	}
 
@@ -651,7 +653,9 @@ public class Main {
 			vaccVerticeNeighbors(e.getOther(v),depth-1);
 		}
 	}
-	public static void globalCommCentralityCalculator(ArrayList<Vertice> vertices, Graph communities)
+	
+
+	public static HashMap<Vertice, HashMap<Integer, Double>> globalCommCentralityCalculator(ArrayList<Vertice> vertices, Graph communities)
 	{
 		HashMap<Vertice, HashMap<Integer, Double>> commConnectivity = new HashMap<>(); //maps vertices to a hashmap of comm ID to fraction of connectivity between communities 
 		Vertice other;
@@ -700,6 +704,65 @@ public class Main {
 			v.FC=current;
 			current=0;
 		}
+		return commConnectivity;
+	}
+	
+	//experimental vaccination method by disconnecting communities. It seems okay but needs more development
+	public static void vaccCommConnectors(HashMap<Vertice, HashMap<Integer, Double>> commConnectivity,HashMap<Integer, ArrayList<String>> commMap,  ArrayList<Vertice> vertices, int numVaccines)
+	{
+		List<ArrayList<Vertice>> result = new ArrayList<>();
+		HashMap<Integer, HashMap<Integer, ArrayList<Vertice>>> connectors = new HashMap<>();
+		int vaccinesLeft = numVaccines;
+		ArrayList<Vertice> temp;
+		for(Integer x: commMap.keySet())
+		{
+			connectors.put(x, new HashMap<>());
+		}
+		for(Vertice v: vertices)
+		{
+			for(Integer x: commConnectivity.get(v).keySet())
+				connectors.get(v.getCommID()).put(x, new ArrayList<>());
+		}
+		for(Vertice v: vertices)
+		{
+			for(Integer x: commConnectivity.get(v).keySet())
+				connectors.get(v.getCommID()).get(x).add(v);
+		}
+		for(Integer x: connectors.keySet())
+		{
+			for(Integer y: connectors.keySet())
+			{
+				if(x!=y&&connectors.get(x).get(y)!=null)
+				{
+					if(connectors.get(x).get(y).size()<connectors.get(y).get(x).size())
+						temp=connectors.get(x).get(y);
+					else
+						temp=connectors.get(y).get(x);
+						result.add(temp);
+				}
+			}
+		}
+		/*
+		Collections.sort(result, new Comparator<ArrayList<Vertice>>() { //sorts lowest to highest
+			@Override
+			public int compare(ArrayList<Vertice> list1, ArrayList<Vertice> list2) {
+				return ((Integer)list1.size()).compareTo((Integer)list2.size());
+			}
+		});
+		*/
+		for(ArrayList<Vertice> list: result)
+		{
+			if(vaccinesLeft-list.size()>=0)
+			{
+				for(Vertice v: list)
+				{
+					v.setVaccinationState(true);
+					v.setProbNotRecovered(0);
+				}
+				vaccinesLeft-=list.size();
+			}
+		}
+		
 	}
 	public static void vaccBridges(ArrayList<Vertice> vertices, int numVaccines,double aggressivenessFactor, int highTraitID, int lowTraitID) //looks for vertices of high something, low something. Ex: High betweenness and low degree
 	{
@@ -1248,6 +1311,7 @@ public class Main {
 
 			StaticSimulation SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
 		//	globalCommCentralityCalculator(vertices,Meta);
+			runStaticSimulation(SS,vertices.get(0),false,true);
 		}
 		else
 		{

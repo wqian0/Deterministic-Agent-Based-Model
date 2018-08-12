@@ -23,6 +23,7 @@ public class StaticSimulation {
 	private int infectiousPd;
 
 	ArrayList<double[]> cumulativeData;
+	ArrayList<ArrayList<Double>> individualData; //collects data on the probability of infection of individual vertices over time
 
 	public StaticSimulation(Graph G, double tProbability, int latentPd, int infectiousPd)
 	{
@@ -43,9 +44,13 @@ public class StaticSimulation {
 		weightRanks=new HashMap<>();
 		setWeightRanks();
 		cumulativeData = new ArrayList<>();
+		individualData=new ArrayList<>();
 
 		for(Vertice v: vertices)
+		{
 			v.setProperties(latentPd, infectiousPd);
+			individualData.add(new ArrayList<>());
+		}
 	}
 
 	public Graph getGraph()
@@ -82,6 +87,11 @@ public class StaticSimulation {
 		peakInfected=0;
 		peakDayInfected=0;
 		cumulativeData = new ArrayList<>();
+		individualData=new ArrayList<>();
+		for(Vertice v: vertices)
+		{
+			individualData.add(new ArrayList<>());
+		}
 	}
 	public void setInfected(ArrayList<Vertice> input)
 	{
@@ -333,8 +343,9 @@ public class StaticSimulation {
 		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
 		{
 			previousTotal=currentTotal;
-			showTrickle();
+	//		showTrickle();
 			cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
+			addIndividualInfected();
 			runTrickleDay();
 			currentInfected=expectedNumInfected();
 			if(currentInfected>peakInfected)
@@ -345,8 +356,9 @@ public class StaticSimulation {
 			currentTotal=currentInfected+expectedNumExposed();
 			totalEverInfected+=currentInfected;
 		}
-		showTrickle();
+	//	showTrickle();
 		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
+		addIndividualInfected();
 	}
 	public void showTrickle()
 	{
@@ -393,6 +405,18 @@ public class StaticSimulation {
 				
 		return result;
 	}
+	
+	public void addIndividualInfected()
+	{
+		for(int i=0; i<vertices.size(); i++)
+		{
+			individualData.get(i).add(vertices.get(i).getCumulation());
+		}
+	}
+	public ArrayList<ArrayList<Double>> getIndividualInfected()
+	{
+		return individualData;
+	}
 	public double numSusceptible()
 	{
 		double result=0;
@@ -401,6 +425,16 @@ public class StaticSimulation {
 			result+=(1-v.getProbInfectedFromContacts())*(1-exposedProduct(v))*v.getProbNotRecovered();
 			
 		return result; 
+	}
+	public int numVaccinated()
+	{
+		int result=0;
+		for(Vertice v: vertices)
+		{
+			if(v.getVaccinationState())
+				result++;
+		}
+		return result;
 	}
 	
 	public double getTotalEverInfected()
