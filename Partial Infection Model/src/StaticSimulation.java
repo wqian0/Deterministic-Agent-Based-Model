@@ -311,7 +311,7 @@ public class StaticSimulation {
 				for(Vertice x: tempMap.keySet())
 				{	
 					altProduct=v.getCumulation();
-					//comment out this bracket to skip backflow correction. Barely changes outbreak and around 5 times faster
+					//comment out this bracket to skip backflow correction. Has little effect on outbreak dynamics and is around 5 times slower when not skipped.
 				
 				{	
 					altProduct=v.getProbInfectedFromContacts();
