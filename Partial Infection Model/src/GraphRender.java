@@ -1,5 +1,5 @@
 // Used to render simulations.
-
+//Currently allows for vaccination of vertices on click.
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -151,10 +151,6 @@ public class GraphRender extends Application{
 			edges = Main.getEdges(e_Full, IDmap, 0);
 			Graph Full = new Graph(vertices,edges,0);
 			e_Full.close();
-			HashMap<Vertice, HashMap<Integer, Double>> input= Main.globalCommCentralityCalculator(vertices,Meta);
-			Main.vaccCommConnectors(input, commMap,vertices,80);
-		//	Main.vaccGlobalPeaks(vertices, 0, 1500, true);
-		//	Main.vaccFC(vertices, 100);
 			SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
 			System.out.println(SS.numVaccinated());
 

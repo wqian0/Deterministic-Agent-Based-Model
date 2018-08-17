@@ -1,11 +1,12 @@
 /*
 Main.java - Class is used to execute the StaticSimulation and DynamicSimulation classes. 
-Available functions include:
-  -Executing Reactionary Vaccination Simulations
-  -Executing Preemptive Vaccination Simulations
-  -Executing Simulations with Static Graphs
-  -Executing Simulations with Dynamic Graphs
-  -Creating Meta-graphs
+
+The StaticSimulation class is for simulations across the full graph of class-enrollment data, 
+whereas the DynamicSimulation class is for simulations across a dynamic graph that rotates between Monday through Friday graphs.
+
+Simulations of the PIM model can be run with the functions RunStaticSimulation and RunDynamicSimulation with the Monte Carlo 
+boolean parameter set to false.
+
  */
 
 import java.io.File;
@@ -716,6 +717,7 @@ public class Main {
 		}
 		return result/vertices.size();
 	}
+	
 	//experimental vaccination method by disconnecting communities. It seems okay but needs more development
 	public static void vaccCommConnectors(HashMap<Vertice, HashMap<Integer, Double>> commConnectivity,HashMap<Integer, ArrayList<String>> commMap,  ArrayList<Vertice> vertices, int numVaccines)
 	{
@@ -781,29 +783,7 @@ public class Main {
 		}
 		
 	}
-	public static void vaccBridges(ArrayList<Vertice> vertices, int numVaccines,double aggressivenessFactor, int highTraitID, int lowTraitID) //looks for vertices of high something, low something. Ex: High betweenness and low degree
-	{
-		List<Vertice> lowTrait = new ArrayList<>(vertices);
-		Collections.sort(lowTrait, new Comparator<Vertice>() { //sorts lowest to highest
-			@Override
-			public int compare(Vertice v1,Vertice v2) {
-				return v1.centralities.get(lowTraitID).compareTo(v2.centralities.get(lowTraitID));
-			}
-		});
-		List<Vertice> highTrait = lowTrait.subList(600, Math.min((int)(numVaccines*aggressivenessFactor),vertices.size()));
-		Collections.sort(highTrait, new Comparator<Vertice>() { //sorts highest to lowest
-			@Override
-			public int compare(Vertice v1,Vertice v2) {
-				return v2.centralities.get(highTraitID).compareTo(v1.centralities.get(highTraitID));
-			}
-		});
-		for(int i=0; i<=numVaccines; i++)
-		{
-			System.out.println(highTrait.get(i).centralities.get(highTraitID));
-			highTrait.get(i).setVaccinationState(true);
-			highTrait.get(i).setProbNotRecovered(0);
-		}
-	}
+
 	// this function is used to run a single set of experiments using the reactionary vaccination strategy
 	/*
 	 * 	Input: 

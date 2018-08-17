@@ -27,7 +27,7 @@ public class Vertice{
 	private PNITracker todayTracker; //The T[u] property
 	ArrayList<Double> centralities; 
 	
-	Double FC;
+	Double FC; //used for experimental vaccination strategies.
 	public enum HealthState
 	{
 		susceptible,
