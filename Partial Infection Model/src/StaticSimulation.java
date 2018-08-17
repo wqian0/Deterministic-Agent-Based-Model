@@ -248,7 +248,7 @@ public class StaticSimulation {
 				peakDayInfected=day-1;
 			}
 		}
-//		show();
+//	show();
 		cumulativeData.add(new double[] {getNumSusceptible(), getNumExposed(), getNumInfected(), getNumResistant()});
 	}
 
@@ -312,7 +312,7 @@ public class StaticSimulation {
 				{	
 					altProduct=v.getCumulation();
 					//comment out this bracket to skip backflow correction. Barely changes outbreak and around 5 times faster
-			/*		
+				
 				{	
 					altProduct=v.getProbInfectedFromContacts();
 					for(int i=latentPd-1; i<v.getTracker().length; i++)
@@ -320,12 +320,13 @@ public class StaticSimulation {
 						altProduct=1-(1-altProduct)/v.getTracker()[i].getPNI(x);
 					}
 					
+					//floating point precision error correction
 					if(altProduct<0)
 						altProduct=0;
-				
+					
 					altProduct*=v.getProbNotRecovered();
 				}
-				*/
+				
 					x.compoundCumulation(1-Math.pow(1-altProduct*tempMap.get(x),v.getContactsPerDay().get(0)),v);
 				}
 			}
@@ -343,7 +344,7 @@ public class StaticSimulation {
 		while(Math.abs(currentTotal-previousTotal)>.5||currentTotal>0.5||day<20)
 		{
 			previousTotal=currentTotal;
-	//		showTrickle();
+			showTrickle();
 			cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 			addIndividualInfected();
 			runTrickleDay();
@@ -356,7 +357,7 @@ public class StaticSimulation {
 			currentTotal=currentInfected+expectedNumExposed();
 			totalEverInfected+=currentInfected;
 		}
-	//	showTrickle();
+		showTrickle();
 		cumulativeData.add(new double[] {numSusceptible(), expectedNumExposed(), expectedNumInfected(), numRecovered()});
 		addIndividualInfected();
 	}

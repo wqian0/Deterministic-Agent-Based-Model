@@ -58,7 +58,7 @@ public class GraphRender extends Application{
 	StaticSimulation SS;
 	int weekday=0;
 	static final int canvasSize = 1500;
-	static final double radius=3; 
+	static final double radius=3.5; 
 	static final double scaleFactor=6.5;
 	Group root;
 	HashMap<String, Vertice> IDmap;
@@ -152,7 +152,8 @@ public class GraphRender extends Application{
 			Graph Full = new Graph(vertices,edges,0);
 			e_Full.close();
 			HashMap<Vertice, HashMap<Integer, Double>> input= Main.globalCommCentralityCalculator(vertices,Meta);
-			Main.vaccCommConnectors(input, commMap,vertices,500);
+			Main.vaccCommConnectors(input, commMap,vertices,80);
+		//	Main.vaccGlobalPeaks(vertices, 0, 1500, true);
 		//	Main.vaccFC(vertices, 100);
 			SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
 			System.out.println(SS.numVaccinated());

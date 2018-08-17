@@ -30,9 +30,9 @@ public class Main {
 	static final String inputDirectory = "C:\\Simulation Input\\";
 
 	//Values for T, alpha, gamma, and contacts per hour. Alpha must be >=1.
-	static final double transmissionProbability=.9;
-	static final int latentPeriod=8;
-	static final int infectiousPeriod=5;
+	static final double transmissionProbability=.1;
+	static final int latentPeriod=1;
+	static final int infectiousPeriod=3;
 	static final int contactsPerHour=3;
 
 	//Used for vaccination distribution analysis
@@ -42,7 +42,7 @@ public class Main {
 	static final int numDayGraphs=5;
 
 	//seeded random for use in stochastic model.  
-	static final SplittableRandom RNG = new SplittableRandom(741);
+	static final SplittableRandom RNG = new SplittableRandom(743); //743 is the original
 
 	// read edges from an input file, assuming the vertices are in the hashmap
 	public static ArrayList<Edge> getEdges(Scanner sc, HashMap<String,Vertice> map, int day)
@@ -707,13 +707,23 @@ public class Main {
 		return commConnectivity;
 	}
 	
+	public static double avgCentrality(ArrayList<Vertice> vertices, int index)
+	{
+		double result=0;
+		for(Vertice v: vertices)
+		{
+			result+=v.centralities.get(index);
+		}
+		return result/vertices.size();
+	}
 	//experimental vaccination method by disconnecting communities. It seems okay but needs more development
 	public static void vaccCommConnectors(HashMap<Vertice, HashMap<Integer, Double>> commConnectivity,HashMap<Integer, ArrayList<String>> commMap,  ArrayList<Vertice> vertices, int numVaccines)
 	{
-		List<ArrayList<Vertice>> result = new ArrayList<>();
+		List<detailedList> result = new ArrayList<>();
 		HashMap<Integer, HashMap<Integer, ArrayList<Vertice>>> connectors = new HashMap<>();
 		int vaccinesLeft = numVaccines;
 		ArrayList<Vertice> temp;
+		ArrayList<Vertice> other;
 		for(Integer x: commMap.keySet())
 		{
 			connectors.put(x, new HashMap<>());
@@ -735,31 +745,38 @@ public class Main {
 				if(x!=y&&connectors.get(x).get(y)!=null)
 				{
 					if(connectors.get(x).get(y).size()<connectors.get(y).get(x).size())
+					{
 						temp=connectors.get(x).get(y);
+						other=connectors.get(y).get(x);
+					}
 					else
+					{
 						temp=connectors.get(y).get(x);
-						result.add(temp);
+						other=connectors.get(x).get(y);
+					}
+						result.add(new detailedList(temp, 0.0)); //this significance parameter needs to be updated. Currently its arbitrary.
 				}
 			}
 		}
-		/*
-		Collections.sort(result, new Comparator<ArrayList<Vertice>>() { //sorts lowest to highest
+		
+		Collections.sort(result, new Comparator<detailedList>() { //sorts lowest to highest
 			@Override
-			public int compare(ArrayList<Vertice> list1, ArrayList<Vertice> list2) {
-				return ((Integer)list1.size()).compareTo((Integer)list2.size());
+			public int compare(detailedList list1, detailedList list2) {
+				return (list2.importanceScore).compareTo(list1.importanceScore);
 			}
 		});
-		*/
-		for(ArrayList<Vertice> list: result)
+		
+		for(int i=0; i<result.size(); i++)
 		{
-			if(vaccinesLeft-list.size()>=0)
+			System.out.println(result.get(i).importanceScore);
+			if(vaccinesLeft-result.get(i).vertices.size()>=0)
 			{
-				for(Vertice v: list)
+				for(Vertice v: result.get(i).vertices)
 				{
 					v.setVaccinationState(true);
 					v.setProbNotRecovered(0);
 				}
-				vaccinesLeft-=list.size();
+				vaccinesLeft-=result.get(i).vertices.size();
 			}
 		}
 		
@@ -997,7 +1014,7 @@ public class Main {
 		double pdMean = getMean(peakDayData);
 		double pdStdError=getstdError(peakDayData);
 		double pdStdDev=getstdDev(peakDayData);
-		System.out.println(initInfectious.getID()+"\t"+mean + "\t" + stdDev+"\t"+stdError+"\t"+pMean+"\t"+pdMean);
+		System.out.println(initInfectious.getID()+"\t"+mean + "\t" + stdDev+"\t"+stdError+"\t"+pMean+"\t"+pdMean+"\t"+pStdDev+"\t"+pdStdDev);
 		pw.println(initInfectious.getID()+"\t"+mean + "\t" + stdDev+"\t"+stdError);
 
 		for(int i=0; i<data.size(); i++)
@@ -1310,8 +1327,8 @@ public class Main {
 			c_FullD.close();
 
 			StaticSimulation SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
-		//	globalCommCentralityCalculator(vertices,Meta);
-			runStaticSimulation(SS,vertices.get(0),false,true);
+		//	runStaticSimulation(SS,vertices.get(0),false,true);
+			runStaticSimulationTrials(SS,vertices.get(0),100,150,(int)(vertices.size()*.2), 30, pw);
 		}
 		else
 		{
