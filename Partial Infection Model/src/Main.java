@@ -1220,7 +1220,58 @@ public class Main {
 		}
 	}
 
-
+	// Calculates the modularity of G based on the communities detected by the ModuLand Cytoscape plug-in.
+	public static double modularityCalculator(Graph G, HashMap<String, Vertice> map, HashMap<Integer, ArrayList<String>> commMap)
+	{
+		double result=0;
+		
+		double e_ii=0;
+		double a_i=0;
+		double overcounted=0;
+		Vertice current;
+		Vertice other;
+		for(Integer x: commMap.keySet())
+		{
+			for(String s: commMap.get(x))
+			{
+				current=map.get(s);
+				for(Edge e: current.getEdges(0))
+				{
+					other=e.getOther(current);
+					if((Integer)other.getCommID()==x)
+					{
+						e_ii++;
+					}
+				}
+			}
+			e_ii=e_ii/(2*G.getEdges().size());
+			for(String s: commMap.get(x))
+			{
+				current=map.get(s);
+				for(Edge e: current.getEdges(0))
+				{
+					other=e.getOther(current);
+					if((Integer)other.getCommID()==x)
+					{
+						overcounted++;
+					}
+					else
+					{
+						a_i++;
+					}
+				}
+				a_i+=overcounted/2;
+				a_i/=G.getEdges().size();
+			}
+			result+=e_ii-a_i*a_i;
+			 e_ii=0;
+			 a_i=0;
+			 overcounted=0;
+		}
+		
+		
+		return result;
+	}
 	// Specific to rendering the original data-set using CytoScape location data. For use with JavaFX.
 	public static HashMap<Vertice, Location> getLocations(Scanner sc, HashMap<String, Vertice> map)
 	{
@@ -1328,7 +1379,8 @@ public class Main {
 
 			StaticSimulation SS = new StaticSimulation(Full,transmissionProbability,latentPeriod,infectiousPeriod);
 		//	runStaticSimulation(SS,vertices.get(0),false,true);
-			runStaticSimulationTrials(SS,vertices.get(0),100,150,(int)(vertices.size()*.2), 30, pw);
+		//	runStaticSimulationTrials(SS,vertices.get(0),100,150,(int)(vertices.size()*.2), 30, pw);
+			System.out.println(modularityCalculator(Full,map, commMap));
 		}
 		else
 		{
