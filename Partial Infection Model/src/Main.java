@@ -1224,7 +1224,7 @@ public class Main {
 					}
 				}
 			}
-			e_ii=e_ii/(2*G.getEdges().size());
+			e_ii=e_ii/(2*G.getEdges().size()); // division by 2 accounts for overcounting
 			for(String s: commMap.get(x))
 			{
 				current=map.get(s);
@@ -1244,11 +1244,11 @@ public class Main {
 				a_i/=G.getEdges().size();
 			}
 			result+=e_ii-a_i*a_i;
-			 e_ii=0;
-			 a_i=0;
-			 overcounted=0;
+			e_ii=0;
+			a_i=0;
+			overcounted=0;
 		}
-		
+
 		
 		return result;
 	}
