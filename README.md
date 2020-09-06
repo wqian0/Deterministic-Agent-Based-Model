@@ -1,6 +1,6 @@
 # Deterministic-Agent-Based-Model
 
-![test](Agent-Based Disease Model 2020-09-05 13-49-36_1.gif)
+![test](https://github.com/wqian0/Deterministic-Agent-Based-Model/blob/master/Agent-Based%20Disease%20Model%202020-09-05%2013-49-36_1.gif)
 
 Disease spread induced by a contact network generated from University of North Texas class enrollment data.
 
