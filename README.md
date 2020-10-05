@@ -1,4 +1,4 @@
-# Deterministic-Agent-Based-Model
+# Partial-Infection-Model
 
 A model for probabilistically predicting the dynamics of outbreaks across static or time-varying contact networks. 
 
