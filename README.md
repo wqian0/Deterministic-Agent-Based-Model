@@ -8,4 +8,3 @@ More details on the model and its mathematical formulation can be found [here](h
 
 Disease spread induced by a contact network generated from University of North Texas class enrollment data.
 
-Stochastic experimental results can be reproduced by using "743" as the SplittableRandom seed and discarding non-outbreak trials (<20% recovered). Results using the Partial Infection Model can be reproduced by enabling first order backflow correction in the function "runTrickleDay()" of the StaticSimulation class. Both sets of experiments were run with vertices.get(0) as the seed of infection.
